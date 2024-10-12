@@ -6,13 +6,14 @@ public class Grid {
     private int tile_size;
     private int map_length, map_height;
 
-    public Grid(int tile_size, int max_map_col, int max_map_row){
-        this.tile_size = tile_size;
+    public Grid(int max_map_col, int max_map_row){
         map_length = max_map_col;
         map_height = max_map_row;
     }
 
-    void display(Graphics G, Camera cam){
+    void display(Graphics G, Camera cam, int scale, int def_tile_size){
+
+        tile_size = scale * def_tile_size;
 
         int grid_row = 0, grid_col = 0;
         int tile_x, tile_y, screen_x, screen_y;
@@ -25,6 +26,7 @@ public class Grid {
 
                 tile_x = grid_col * tile_size;
 
+                    //only draw tiles visible on the screen
                     if 
                     ((tile_x + tile_size > cam.x_pos - cam.screen_x && 
                     tile_x - tile_size < cam.x_pos + cam.screen_x) &&
@@ -35,7 +37,6 @@ public class Grid {
                         screen_y = tile_y - cam.y_pos + cam.screen_y; 
 
                         G.drawRect(screen_x, screen_y, tile_size, tile_size);
-                        //G.drawRect
                     }
 
                 grid_col++;

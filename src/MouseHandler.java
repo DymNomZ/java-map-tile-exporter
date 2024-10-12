@@ -1,14 +1,17 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
-public class MouseHandler implements MouseMotionListener, MouseListener {
+public class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener{
 
     public int mouse_x, mouse_y, clicked_x, clicked_y, recent_x, recent_y;
+    public int scale_factor = 0, wheel_rotation;
     public boolean is_pressed = false, is_dragged = false;
     public boolean left_pressed = false, right_pressed = false, middle_pressed = false;
 
-    public MouseHandler(int tile_size, int SCREEN_WIDTH, int SCREEN_HEIGHT){
+    public MouseHandler(int SCREEN_WIDTH, int SCREEN_HEIGHT){
         mouse_x = SCREEN_WIDTH / 2;
         mouse_y = SCREEN_HEIGHT / 2;
         recent_x = mouse_x;
@@ -48,6 +51,18 @@ public class MouseHandler implements MouseMotionListener, MouseListener {
         mouse_x = recent_x;
         mouse_y = recent_y;
     }    
+
+    int get_scale_factor(){
+        return scale_factor;
+    }
+    
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        
+        wheel_rotation = e.getWheelRotation();
+        if(wheel_rotation > 0) scale_factor = -1;
+        else if(wheel_rotation < 0) scale_factor = 1;
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
