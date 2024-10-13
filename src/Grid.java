@@ -19,8 +19,6 @@ public class Grid {
         }
     }
 
-    
-
     void display(
         Graphics G, Camera cam, 
         int scale, int def_tile_size,

@@ -11,10 +11,11 @@ public class Main {
         Panel panel = new Panel();
         window.add(panel);
         window.pack();
-        window.setLocationRelativeTo(null);
+        window.setLocation(325, 0);
         window.setVisible(true);
 
         MapSettings settings = new MapSettings(panel);
+        TileList tile_list = new TileList();
         panel.start_clock();
 
         

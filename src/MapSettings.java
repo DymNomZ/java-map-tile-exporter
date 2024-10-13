@@ -77,6 +77,7 @@ public class MapSettings extends JFrame {
         this.setTitle("Settings");
         this.setSize(300, 300);
         this.getContentPane().setBackground(Color.BLACK);
+        this.setLocation(25, 0);
         this.setResizable(false);
         this.setFocusable(true);
         this.setVisible(true);

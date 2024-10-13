@@ -10,7 +10,7 @@ public class Panel extends JPanel {
     
     public final int SCREEN_WIDTH = 800;
     public final int SCREEN_HEIGHT = 800;
-    public final int DEF_TILE_SIZE = 10;
+    public final int DEF_TILE_SIZE = 14;
 
     public int scale = 1;
     public int tile_size = DEF_TILE_SIZE * scale;
@@ -39,6 +39,7 @@ public class Panel extends JPanel {
             (max_map_col * tile_size) / 2, 
             (max_map_row * tile_size) / 2
         );
+        repaint();
     }
 
     private final ActionListener timer_listener = new ActionListener() {
