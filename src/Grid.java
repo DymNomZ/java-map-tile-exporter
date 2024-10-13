@@ -8,6 +8,7 @@ public class Grid {
     
     private int tile_size;
     private int map_length, map_height;
+    BufferedImage blank = null;
     BufferedImage image = null;
     
     public Grid(){

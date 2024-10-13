@@ -32,6 +32,7 @@ public class TileList extends JFrame {
     private JTextField idx_input = null;
     private JCheckBox solid_check = null;
     private JScrollPane scroll_pane = null;
+    private String texture_name = " ";
     private int dot_idx = -1;
     public File selected_folder;
     public File[] files;
@@ -114,14 +115,15 @@ public class TileList extends JFrame {
                         System.out.println("Error loading tile image");
                     }
 
-                    dot_idx = file.getName().lastIndexOf('.');
-                    tile_image = new JLabel(new ImageIcon(tile));
-
                     new_panel = new JPanel();
                     new_panel.setBackground(Color.BLACK);
                     new_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 10));
 
-                    tile_name = new JLabel(file.getName().substring(0, dot_idx));
+                    dot_idx = file.getName().lastIndexOf('.');
+                    texture_name = file.getName().substring(0, dot_idx);
+
+                    tile_image = new JLabel(new ImageIcon(tile));
+                    tile_name = new JLabel(texture_name);
                     tile_name.setForeground(Color.WHITE);
 
                     idx_label = new JLabel("idx");
@@ -134,7 +136,7 @@ public class TileList extends JFrame {
                         public void keyTyped(KeyEvent e) {
                             char c = e.getKeyChar();
                             // Ignore non-digit characters
-                            if (!Character.isDigit(c)) {
+                            if (!Character.isDigit(c) || c == '0') {
                                 e.consume();
                             }
                         }
@@ -167,6 +169,7 @@ public class TileList extends JFrame {
                     mini_grid.add(solid_check);
 
                     new_panel.add(mini_grid);
+                    new_panel.addMouseListener(new TileHandler(tile, texture_name));
 
                     cards.add(new_panel);
                 }
