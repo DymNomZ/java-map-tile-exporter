@@ -23,6 +23,13 @@ public class Camera {
         screen_y = SCREEN_HEIGHT / 2;
     }
 
+    public void resize_adjust(int new_x, int new_y){
+        x_pos = new_x;
+        y_pos = new_y;
+        prev_x = x_pos;
+        prev_y = y_pos;
+    }
+
     public void update_position(MouseHandler mouse, int new_scale, int def_tile_size){
 
         int old_scale = scale;
@@ -47,6 +54,9 @@ public class Camera {
                 else{
                     if(x_pos != 0) x_pos = (x_pos /= old_scale) * new_scale;
                     if(y_pos != 0) y_pos = (y_pos /= old_scale) * new_scale;
+                    //reset previous coords to downscaled coords
+                    prev_x = x_pos;
+                    prev_y = y_pos;
                 }
            }
             

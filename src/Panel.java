@@ -18,7 +18,7 @@ public class Panel extends JPanel {
 
     Camera cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, max_map_col, max_map_row);
 
-    Grid grid = new Grid(max_map_col, max_map_row);
+    Grid grid = new Grid();
 
     MouseHandler mouse = new MouseHandler(SCREEN_WIDTH, SCREEN_HEIGHT);
     
@@ -29,6 +29,16 @@ public class Panel extends JPanel {
         this.addMouseMotionListener(mouse);
         this.addMouseListener(mouse);
         this.addMouseWheelListener(mouse);
+    }
+
+    public void set_dimensions(int col, int row){
+        max_map_col = col;
+        max_map_row = row;
+        //System.out.println(col + " " + row);
+        cam.resize_adjust(
+            (max_map_col * tile_size) / 2, 
+            (max_map_row * tile_size) / 2
+        );
     }
 
     private final ActionListener timer_listener = new ActionListener() {
@@ -52,7 +62,7 @@ public class Panel extends JPanel {
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        grid.display(g, cam, scale, DEF_TILE_SIZE);
+        grid.display(g, cam, scale, DEF_TILE_SIZE, max_map_col, max_map_row);
         cam.debug_display(g, scale, DEF_TILE_SIZE);
     }
 

@@ -13,6 +13,10 @@ public class Main {
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
+
+        MapSettings settings = new MapSettings(panel);
         panel.start_clock();
+
+        
     }
 }

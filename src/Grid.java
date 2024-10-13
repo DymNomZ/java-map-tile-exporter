@@ -10,9 +10,8 @@ public class Grid {
     private int map_length, map_height;
     BufferedImage image = null;
     
-    public Grid(int max_map_col, int max_map_row){
-        map_length = max_map_col;
-        map_height = max_map_row;
+    public Grid(){
+        
         try {
             image = ImageIO.read(getClass().getResourceAsStream("test.png"));
         } catch (IOException e) {
@@ -22,8 +21,14 @@ public class Grid {
 
     
 
-    void display(Graphics G, Camera cam, int scale, int def_tile_size){
+    void display(
+        Graphics G, Camera cam, 
+        int scale, int def_tile_size,
+        int max_map_col, int max_map_row
+    ){
 
+        map_length = max_map_col;
+        map_height = max_map_row;
         tile_size = scale * def_tile_size;
 
         int grid_row = 0, grid_col = 0;
