@@ -61,12 +61,13 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
         
         wheel_rotation = e.getWheelRotation();
         if(wheel_rotation > 0){
-            if(scale_factor == 3) scale_factor = 2;
-            else if(scale_factor == 2) scale_factor = 1;
+            
+            if(scale_factor == 2) scale_factor = 1;
+            else if(scale_factor == 3) scale_factor = 2;
         }
         else if(wheel_rotation < 0){
             if(scale_factor == 1) scale_factor = 2;
-            else if(scale_factor == 2) scale_factor = 3; 
+           else if(scale_factor == 2) scale_factor = 3; 
         }
         //System.out.println(scale_factor);
     }

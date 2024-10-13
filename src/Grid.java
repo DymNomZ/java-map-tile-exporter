@@ -47,9 +47,9 @@ public class Grid {
                         screen_x = tile_x - cam.x_pos + cam.screen_x;    
                         screen_y = tile_y - cam.y_pos + cam.screen_y; 
 
-                        //G.drawRect(screen_x, screen_y, tile_size, tile_size);
+                        G.drawRect(screen_x, screen_y, tile_size, tile_size);
                         
-                        G.drawImage(image, screen_x, screen_y, tile_size, tile_size, null);
+                        //G.drawImage(image, screen_x, screen_y, tile_size, tile_size, null);
                     }
 
                 grid_col++;

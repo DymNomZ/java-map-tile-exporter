@@ -5,15 +5,16 @@ import java.awt.Graphics;
 
 public class Camera {
     
-    private int tile_size, delta_x, delta_y, prev_x, prev_y;
+    private int tile_size, scale, delta_x, delta_y, prev_x, prev_y;
     public int x_pos, y_pos, screen_x, screen_y, map_length, map_height;
 
     public Camera(
         int SCREEN_WIDTH, int SCREEN_HEIGHT, 
-        int tile_size, 
+        int tile_size, int scale, 
         int map_length, int map_height
     ){
         this.tile_size = tile_size;
+        this.scale = scale;
         x_pos = (map_length * tile_size) / 2;
         y_pos = (map_height * tile_size) / 2;
         prev_x = x_pos;
@@ -22,12 +23,14 @@ public class Camera {
         screen_y = SCREEN_HEIGHT / 2;
     }
 
-    public void update_position(MouseHandler mouse, int scale, int def_tile_size){
+    public void update_position(MouseHandler mouse, int new_scale, int def_tile_size){
 
-        //System.out.println(screen_x + " " + screen_y + " " + x_pos + " " + y_pos);
-
+        int old_scale = scale;
         int old_tile_size = tile_size;
-        tile_size = scale * def_tile_size;
+        tile_size = new_scale * def_tile_size;
+        scale = new_scale;
+
+        //System.out.println(old_scale + " " + new_scale);
 
         //handle zooming
         if(tile_size != old_tile_size){
@@ -35,8 +38,16 @@ public class Camera {
                 x_pos += prev_x;
                 y_pos += prev_y;
            }else if(tile_size < old_tile_size){
-                x_pos -= prev_x;
-                y_pos -= prev_y;
+                //check if new scale is larger, just add appropriate amount of pixels to coords
+                if(new_scale > old_scale){
+                    x_pos += prev_x;
+                    y_pos += prev_y;
+                }
+                //Divide by previous scale and multiply by new scale to adjust
+                else{
+                    if(x_pos != 0) x_pos = (x_pos /= old_scale) * new_scale;
+                    if(y_pos != 0) y_pos = (y_pos /= old_scale) * new_scale;
+                }
            }
             
         }
@@ -64,9 +75,8 @@ public class Camera {
             //store coords as basis for number of pixels prior to scaling
             prev_x = x_pos;
             prev_y = y_pos;
-            
         }
-        System.out.println(x_pos + " " + y_pos + " " + screen_x + " " + screen_y + " " + prev_x + " " + prev_y);
+        //System.out.println(x_pos + " " + y_pos + " " + prev_x + " " + prev_y);
         
     }
 

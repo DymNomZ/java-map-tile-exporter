@@ -10,13 +10,13 @@ public class Panel extends JPanel {
     
     public final int SCREEN_WIDTH = 800;
     public final int SCREEN_HEIGHT = 800;
-    public final int DEF_TILE_SIZE = 16;
+    public final int DEF_TILE_SIZE = 10;
 
     public int scale = 1;
     public int tile_size = DEF_TILE_SIZE * scale;
     public int max_map_col = 25, max_map_row = 25;
 
-    Camera cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, max_map_col, max_map_row);
+    Camera cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, max_map_col, max_map_row);
 
     Grid grid = new Grid(max_map_col, max_map_row);
 
