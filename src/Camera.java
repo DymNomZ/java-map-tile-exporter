@@ -7,7 +7,6 @@ public class Camera {
     
     private int tile_size, delta_x, delta_y, prev_x, prev_y;
     public int x_pos, y_pos, screen_x, screen_y, map_length, map_height;
-    public int screen_half_x, screen_half_y;
 
     public Camera(
         int SCREEN_WIDTH, int SCREEN_HEIGHT, 
@@ -19,11 +18,11 @@ public class Camera {
         y_pos = (map_height * tile_size) / 2;
         screen_x = SCREEN_WIDTH / 2;
         screen_y = SCREEN_HEIGHT / 2;
-        screen_half_x = SCREEN_WIDTH / 2;
-        screen_half_y = SCREEN_HEIGHT / 2;
     }
 
     public void update_position(MouseHandler mouse, int scale, int def_tile_size){
+
+        //System.out.println(screen_x + " " + screen_y + " " + x_pos + " " + y_pos);
 
         int old_tile_size = tile_size;
         tile_size = scale * def_tile_size;
@@ -33,11 +32,13 @@ public class Camera {
            if(tile_size > old_tile_size){
                 prev_x = x_pos;
                 prev_y = y_pos;
-                x_pos *= scale;
-                y_pos *= scale;
+                x_pos *= 2;
+                y_pos *= 2;
            }else if(tile_size < old_tile_size){
-                x_pos -= (prev_x * (scale));
-                y_pos -= (prev_y * (scale));
+                x_pos -= prev_x;
+                y_pos -= prev_y;
+                prev_x /= 2;
+                prev_y /= 2;
            }
             
         }

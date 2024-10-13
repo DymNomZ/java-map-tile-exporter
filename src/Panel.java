@@ -14,8 +14,8 @@ public class Panel extends JPanel {
     public int max_map_col = 50, max_map_row = 50;
 
     //public final int MAX_SCREEN_ROW = 10, MAX_SCREEN_COL = 20, SCREEN_TILE_SIZE = 64;
-    public final int SCREEN_WIDTH = 1280;
-    public final int SCREEN_HEIGHT = 720;
+    public final int SCREEN_WIDTH = 800;
+    public final int SCREEN_HEIGHT = 800;
 
     Camera cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, max_map_col, max_map_row);
 
@@ -39,9 +39,7 @@ public class Panel extends JPanel {
             cam.update_position(mouse, scale, def_tile_size);
 
             //dictate how much scale will change when mouse wheel is scrolled
-            scale += mouse.get_scale_factor();
-            if(scale <= 0) scale = 1; 
-            else if(scale > 2) scale = 2;
+            scale = mouse.get_scale_factor();
 
             repaint();
         }

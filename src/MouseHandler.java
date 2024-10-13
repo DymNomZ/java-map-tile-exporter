@@ -7,7 +7,7 @@ import java.awt.event.MouseWheelListener;
 public class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener{
 
     public int mouse_x, mouse_y, clicked_x, clicked_y, recent_x, recent_y;
-    public int scale_factor = 0, wheel_rotation;
+    public int scale_factor = 1, wheel_rotation;
     public boolean is_pressed = false, is_dragged = false;
     public boolean left_pressed = false, right_pressed = false, middle_pressed = false;
 
@@ -60,8 +60,18 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     public void mouseWheelMoved(MouseWheelEvent e) {
         
         wheel_rotation = e.getWheelRotation();
-        if(wheel_rotation > 0) scale_factor = -1;
-        else if(wheel_rotation < 0) scale_factor = 1;
+        if(wheel_rotation > 0){
+            if(scale_factor == 3) scale_factor = 2;
+            else if(scale_factor == 2) scale_factor = 1;
+            
+            
+        }
+        else if(wheel_rotation < 0){
+            
+            if(scale_factor == 1) scale_factor = 2;
+            else if(scale_factor == 2) scale_factor = 3; 
+        }
+        //System.out.println(scale_factor);
     }
 
     @Override

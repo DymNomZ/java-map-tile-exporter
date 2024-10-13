@@ -1,15 +1,26 @@
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Grid {
     
     private int tile_size;
     private int map_length, map_height;
-
+    BufferedImage image = null;
+    
     public Grid(int max_map_col, int max_map_row){
         map_length = max_map_col;
         map_height = max_map_row;
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream("fidget_spinner.png"));
+        } catch (IOException e) {
+            System.out.println("Error");
+        }
     }
+
+    
 
     void display(Graphics G, Camera cam, int scale, int def_tile_size){
 
@@ -36,7 +47,9 @@ public class Grid {
                         screen_x = tile_x - cam.x_pos + cam.screen_x;    
                         screen_y = tile_y - cam.y_pos + cam.screen_y; 
 
-                        G.drawRect(screen_x, screen_y, tile_size, tile_size);
+                        //G.drawRect(screen_x, screen_y, tile_size, tile_size);
+                        
+                        G.drawImage(image, screen_x, screen_y, tile_size, tile_size, null);
                     }
 
                 grid_col++;
