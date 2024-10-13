@@ -14,7 +14,7 @@ public class Grid {
         map_length = max_map_col;
         map_height = max_map_row;
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("fidget_spinner.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("test.png"));
         } catch (IOException e) {
             System.out.println("Error");
         }

@@ -3,19 +3,18 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Panel extends JPanel {
     
-    public int scale = 1, def_tile_size = 32;
-    public int tile_size = def_tile_size * scale;
-    public int max_map_col = 50, max_map_row = 50;
-
-    //public final int MAX_SCREEN_ROW = 10, MAX_SCREEN_COL = 20, SCREEN_TILE_SIZE = 64;
     public final int SCREEN_WIDTH = 800;
     public final int SCREEN_HEIGHT = 800;
+    public final int DEF_TILE_SIZE = 16;
+
+    public int scale = 1;
+    public int tile_size = DEF_TILE_SIZE * scale;
+    public int max_map_col = 25, max_map_row = 25;
 
     Camera cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, max_map_col, max_map_row);
 
@@ -32,11 +31,11 @@ public class Panel extends JPanel {
         this.addMouseWheelListener(mouse);
     }
 
-    private ActionListener timer_listener = new ActionListener() {
+    private final ActionListener timer_listener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e){
 
-            cam.update_position(mouse, scale, def_tile_size);
+            cam.update_position(mouse, scale, DEF_TILE_SIZE);
 
             //dictate how much scale will change when mouse wheel is scrolled
             scale = mouse.get_scale_factor();
@@ -53,8 +52,8 @@ public class Panel extends JPanel {
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        grid.display(g, cam, scale, def_tile_size);
-        cam.debug_display(g, scale, def_tile_size);
+        grid.display(g, cam, scale, DEF_TILE_SIZE);
+        cam.debug_display(g, scale, DEF_TILE_SIZE);
     }
 
 }

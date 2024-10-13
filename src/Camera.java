@@ -16,6 +16,8 @@ public class Camera {
         this.tile_size = tile_size;
         x_pos = (map_length * tile_size) / 2;
         y_pos = (map_height * tile_size) / 2;
+        prev_x = x_pos;
+        prev_y = y_pos;
         screen_x = SCREEN_WIDTH / 2;
         screen_y = SCREEN_HEIGHT / 2;
     }
@@ -30,15 +32,11 @@ public class Camera {
         //handle zooming
         if(tile_size != old_tile_size){
            if(tile_size > old_tile_size){
-                prev_x = x_pos;
-                prev_y = y_pos;
-                x_pos *= 2;
-                y_pos *= 2;
+                x_pos += prev_x;
+                y_pos += prev_y;
            }else if(tile_size < old_tile_size){
                 x_pos -= prev_x;
                 y_pos -= prev_y;
-                prev_x /= 2;
-                prev_y /= 2;
            }
             
         }
@@ -63,9 +61,12 @@ public class Camera {
             || mouse.mouse_y > mouse.clicked_y + tile_size){
                 y_pos += delta_y;
             }
+            //store coords as basis for number of pixels prior to scaling
+            prev_x = x_pos;
+            prev_y = y_pos;
             
         }
-        //System.out.println(x_pos + " " + y_pos + " " + screen_x + " " + screen_y + " " + prev_x + " " + prev_y);
+        System.out.println(x_pos + " " + y_pos + " " + screen_x + " " + screen_y + " " + prev_x + " " + prev_y);
         
     }
 
