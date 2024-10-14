@@ -6,11 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,7 +23,7 @@ public class TileList extends JFrame {
     private final JButton add_btn;
     private JFileChooser file_chooser = null;
     private final ActionListener click_listener;
-    private BufferedImage tile = null;
+    private Tile tile = null;
     private JLabel tile_image = null, tile_name = null, idx_label, solid_label;
     private JPanel main_panel = null, new_panel = null, mini_grid = null;
     private JTextField idx_input = null;
@@ -55,7 +52,7 @@ public class TileList extends JFrame {
         //just learned 0 is for multiple columns, I was used to assuming -1 for infinites
         this.setLayout(new GridLayout(0, 1));
 
-        //lamdaed, handle adding
+        //lamdaed, handle adding of tiles to list
         click_listener = (ActionEvent e) -> {
             file_chooser = new JFileChooser();
             file_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -73,6 +70,7 @@ public class TileList extends JFrame {
 
         add_btn.addActionListener(click_listener);
 
+        //make list scrollable when list gets bigger
         scroll_pane = new JScrollPane(main_panel);
 
         add(scroll_pane);
@@ -103,11 +101,7 @@ public class TileList extends JFrame {
 
                     //System.out.println(file.getName());
 
-                    try {
-                        tile = ImageIO.read(getClass().getResourceAsStream(file.getAbsolutePath()));
-                    } catch (IOException ex) {
-                        System.out.println("Error loading tile image");
-                    }
+                    tile = new Tile(file.getAbsolutePath(), 0);
 
                     new_panel = new JPanel();
                     new_panel.setBackground(Color.BLACK);
@@ -116,7 +110,7 @@ public class TileList extends JFrame {
                     dot_idx = file.getName().lastIndexOf('.');
                     texture_name = file.getName().substring(0, dot_idx);
 
-                    tile_image = new JLabel(new ImageIcon(tile));
+                    tile_image = new JLabel(new ImageIcon(tile.image));
                     tile_name = new JLabel(texture_name);
                     tile_name.setForeground(Color.WHITE);
 
@@ -163,6 +157,8 @@ public class TileList extends JFrame {
                     mini_grid.add(solid_check);
 
                     new_panel.add(mini_grid);
+
+                    //Handles what tile is selecting for placing on grid
                     new_panel.addMouseListener(
                         new CardHandler(
                             panel, tile, 
@@ -171,10 +167,13 @@ public class TileList extends JFrame {
                         )
                     );
 
+                    //add to tile data array in panel for finalizing purposes
+                    panel.add_tile_data(tile, idx_input);
                     cards.add(new_panel);
                 }
             }
 
+            //display selection of tiles on window
             for(JPanel p : cards){
                 main_panel.add(p);
             }

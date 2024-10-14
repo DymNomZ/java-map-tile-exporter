@@ -17,6 +17,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     }
 
     public MouseHandler(int SCREEN_WIDTH, int SCREEN_HEIGHT){
+        //sets default coords of mouse
         mouse_x = SCREEN_WIDTH / 2;
         mouse_y = SCREEN_HEIGHT / 2;
         recent_x = mouse_x;
@@ -25,6 +26,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     
     @Override
     public void mouseDragged(MouseEvent e) {
+        //update mouse coords to mouse position on screen
         is_dragged = true;
         mouse_x = e.getX();
         mouse_y = e.getY();
@@ -47,7 +49,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     @Override
     public void mouseReleased(MouseEvent e) {
         //System.out.println("I am released");
-
+        //reset
         is_pressed = false;
         is_dragged = false;
         switch(e.getButton()){
@@ -65,6 +67,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         
+        //handle scaling
         wheel_rotation = e.getWheelRotation();
         if(wheel_rotation > 0){
             
@@ -80,7 +83,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        //for tile_handler
+        //for tile_handler, position of mouse on the screen
         tile_x = e.getX();
         tile_y = e.getY();
     }

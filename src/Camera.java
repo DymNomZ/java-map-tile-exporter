@@ -1,6 +1,4 @@
 
-import java.awt.Color;
-import java.awt.Graphics;
 
 
 public class Camera {
@@ -15,15 +13,20 @@ public class Camera {
     ){
         this.tile_size = tile_size;
         this.scale = scale;
+
+        //handle camera coordinates in respect to the map
         x_pos = (map_length * tile_size) / 2;
         y_pos = (map_height * tile_size) / 2;
         prev_x = x_pos;
         prev_y = y_pos;
+
+        //will not change, camera is always at center
         screen_x = SCREEN_WIDTH / 2;
         screen_y = SCREEN_HEIGHT / 2;
     }
 
     public void resize_adjust(int new_x, int new_y){
+        //change coords to match with new map dimensions
         x_pos = new_x;
         y_pos = new_y;
         prev_x = x_pos;
@@ -90,10 +93,10 @@ public class Camera {
         
     }
 
-    void debug_display(Graphics G, int scale, int def_tile_size){
+    // void debug_display(Graphics G, int scale, int def_tile_size){
 
-        G.setColor(Color.green);
-        G.drawRect(screen_x, screen_y, tile_size, tile_size);
-    }
+    //     G.setColor(Color.green);
+    //     G.drawRect(screen_x, screen_y, tile_size, tile_size);
+    // }
 
 }

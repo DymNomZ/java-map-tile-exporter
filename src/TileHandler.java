@@ -17,11 +17,14 @@ public class TileHandler {
     ){
         this.tile_size = tile_size;
         this.scale = scale;
+
+        //handle tile selected position, this is the tile hovering with the cursor
         x_pos = (map_length * tile_size) / 2;
         y_pos = (map_height * tile_size) / 2;
         prev_x = x_pos;
         prev_y = y_pos;
 
+        //default is void
         try {
             blank = ImageIO.read(getClass().getResourceAsStream("void.png"));
         } catch (IOException e) {
@@ -68,11 +71,11 @@ public class TileHandler {
     public void display_tile(
         Graphics G, 
         int scale, int def_tile_size, 
-        BufferedImage tile
+        Tile tile
     ){
         //check if it is not void tile, otherwise, not render, void tile represents nothing is selected
-        if(tile != blank){
-            G.drawImage(tile, screen_x, screen_y, tile_size, tile_size, null);
+        if(tile.image != blank){
+            G.drawImage(tile.image, screen_x, screen_y, tile_size, tile_size, null);
         }
     }
 }

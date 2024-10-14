@@ -1,39 +1,28 @@
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class Grid {
     
     private int tile_size;
     private int map_length, map_height;
-    BufferedImage image = null;
-    BufferedImage[][] tiles;
-    int[][] indexes;
+    Tile[][] tiles;
     
     public Grid(int col, int row){
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream("void.png"));
-        } catch (IOException e) {
-            System.out.println("Error loading void tile");
-        }
 
         initialize_grid(col, row);
     }
 
-    public int[][] get_tile_data(){
-        return indexes;
+    public Tile[][] get_map_data(){
+        return tiles;
     }
 
+    //fill grid array with void tiles
     public void initialize_grid(int col, int row){
         //System.out.println(col + " " + row);
-        tiles = new BufferedImage[row][col];
-        indexes = new int[row][col];
+        tiles = new Tile[row][col];
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
-                tiles[i][j] = image;
-                indexes[i][j] = 0;
+                tiles[i][j] = new Tile("void.png", 0);
             }
         }
     }
@@ -42,8 +31,7 @@ public class Grid {
         Graphics G, Camera cam, 
         int scale, int def_tile_size,
         int max_map_col, int max_map_row,
-        BufferedImage tile, MouseHandler mouse, 
-        int tile_index
+        Tile tile, MouseHandler mouse
     ){
 
         map_length = max_map_col;
@@ -80,7 +68,6 @@ public class Grid {
                             ){
                                 //if so, that means, the mouse is pointing at the tile, place it
                                 tiles[grid_row][grid_col] = tile;
-                                indexes[grid_row][grid_col] = tile_index;
                                 //replacing the tile in the tiles array that will draw on the grid
 
                                 //handle drawing mode
@@ -91,7 +78,7 @@ public class Grid {
                         }
                         
                         G.drawImage(
-                            tiles[grid_row][grid_col], 
+                            tiles[grid_row][grid_col].image, 
                             screen_x, screen_y, 
                             tile_size, tile_size, null
                         );
