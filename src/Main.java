@@ -15,7 +15,7 @@ public class Main {
         window.setVisible(true);
 
         MapSettings settings = new MapSettings(panel);
-        TileList tile_list = new TileList();
+        TileList tile_list = new TileList(panel);
         panel.start_clock();
 
         

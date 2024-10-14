@@ -8,22 +8,34 @@ public class Grid {
     
     private int tile_size;
     private int map_length, map_height;
-    BufferedImage blank = null;
     BufferedImage image = null;
+    BufferedImage[][] tiles;
     
-    public Grid(){
-        
+    public Grid(int col, int row){
         try {
-            image = ImageIO.read(getClass().getResourceAsStream("test.png"));
+            image = ImageIO.read(getClass().getResourceAsStream("void.png"));
         } catch (IOException e) {
-            System.out.println("Error");
+            System.out.println("Error loading void tile");
+        }
+
+        initialize_grid(col, row);
+    }
+
+    public void initialize_grid(int col, int row){
+        //System.out.println(col + " " + row);
+        tiles = new BufferedImage[row][col];
+        for(int i = 0; i < row; i++){
+            for(int j = 0; j < col; j++){
+                tiles[i][j] = image;
+            }
         }
     }
 
     void display(
         Graphics G, Camera cam, 
         int scale, int def_tile_size,
-        int max_map_col, int max_map_row
+        int max_map_col, int max_map_row,
+        BufferedImage tile, MouseHandler mouse
     ){
 
         map_length = max_map_col;
@@ -51,9 +63,21 @@ public class Grid {
                         screen_x = tile_x - cam.x_pos + cam.screen_x;    
                         screen_y = tile_y - cam.y_pos + cam.screen_y; 
 
-                        G.drawRect(screen_x, screen_y, tile_size, tile_size);
+                        //G.drawRect(screen_x, screen_y, tile_size, tile_size);
+                        if(mouse.is_clicked){
+                            if(
+                                (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
+                                (mouse.tile_y > screen_y && mouse.tile_y < screen_y + tile_size)
+                            ){
+                                tiles[grid_row][grid_col] = tile;
+                            }
+                        }
                         
-                        //G.drawImage(image, screen_x, screen_y, tile_size, tile_size, null);
+                        G.drawImage(
+                            tiles[grid_row][grid_col], 
+                            screen_x, screen_y, 
+                            tile_size, tile_size, null
+                        );
                     }
 
                 grid_col++;

@@ -1,39 +1,68 @@
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class TileHandler implements MouseListener {
-    public BufferedImage tile;
-    public String tile_name;
+public class TileHandler {
 
-    public TileHandler(BufferedImage tile, String tile_name){
-        this.tile = tile;
-        this.tile_name = tile_name;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        System.out.println(tile_name);
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
+    private int tile_size, scale, prev_x, prev_y;
+    public int x_pos, y_pos, screen_x = 0, screen_y = 0;
+    public int map_length, map_height;
     
+    public TileHandler(
+        int SCREEN_WIDTH, int SCREEN_HEIGHT, 
+        int tile_size, int scale, 
+        int map_length, int map_height
+    ){
+        this.tile_size = tile_size;
+        this.scale = scale;
+        //ignore for now
+        x_pos = (map_length * tile_size) / 2;
+        y_pos = (map_height * tile_size) / 2;
+        prev_x = x_pos;
+        prev_y = y_pos;
+        //
+    }
+
+    public void update_position(MouseHandler mouse, int new_scale, int def_tile_size){
+
+        screen_x = mouse.tile_x;
+        screen_y = mouse.tile_y;
+        //System.out.println(screen_x + " " + screen_y);
+
+        int old_scale = scale;
+        int old_tile_size = tile_size;
+        tile_size = new_scale * def_tile_size;
+        scale = new_scale;
+
+        //handle zooming
+        if(tile_size != old_tile_size){
+           if(tile_size > old_tile_size){
+                x_pos += prev_x;
+                y_pos += prev_y;
+           }else if(tile_size < old_tile_size){
+                //check if new scale is larger, just add appropriate amount of pixels to coords
+                if(new_scale > old_scale){
+                    x_pos += prev_x;
+                    y_pos += prev_y;
+                }
+                //Divide by previous scale and multiply by new scale to adjust
+                else{
+                    if(x_pos != 0) x_pos = (x_pos /= old_scale) * new_scale;
+                    if(y_pos != 0) y_pos = (y_pos /= old_scale) * new_scale;
+                    //reset previous coords to downscaled coords
+                    prev_x = x_pos;
+                    prev_y = y_pos;
+                }
+           }
+            
+        }
+        
+    }
+
+    public void display_tile(
+        Graphics G, 
+        int scale, int def_tile_size, 
+        BufferedImage tile
+    ){
+        G.drawImage(tile, screen_x, screen_y, tile_size, tile_size, null);
+    }
 }

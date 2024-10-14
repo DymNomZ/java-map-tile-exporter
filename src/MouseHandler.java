@@ -6,10 +6,15 @@ import java.awt.event.MouseWheelListener;
 
 public class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener{
 
-    public int mouse_x, mouse_y, clicked_x, clicked_y, recent_x, recent_y;
+    public int mouse_x = 0, mouse_y = 0, clicked_x, clicked_y, recent_x = 0, recent_y = 0;
     public int scale_factor = 1, wheel_rotation;
-    public boolean is_pressed = false, is_dragged = false;
+    public int tile_x = 0, tile_y = 0; //for tile_handler
+    public boolean is_pressed = false, is_dragged = false, is_clicked = false;
     public boolean left_pressed = false, right_pressed = false, middle_pressed = false;
+
+    public MouseHandler(){
+
+    }
 
     public MouseHandler(int SCREEN_WIDTH, int SCREEN_HEIGHT){
         mouse_x = SCREEN_WIDTH / 2;
@@ -41,6 +46,8 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        //System.out.println("I am released");
+        is_clicked = false;
         is_pressed = false;
         is_dragged = false;
         switch(e.getButton()){
@@ -73,13 +80,16 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        
+    public void mouseMoved(MouseEvent e) {
+        //for tile_handler
+        tile_x = e.getX();
+        tile_y = e.getY();
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-
+    public void mouseClicked(MouseEvent e) {
+        //System.out.println("I am clicked");
+        is_clicked = true;
     }
 
     @Override

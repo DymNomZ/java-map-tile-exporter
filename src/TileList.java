@@ -34,22 +34,23 @@ public class TileList extends JFrame {
     private JScrollPane scroll_pane = null;
     private String texture_name = " ";
     private int dot_idx = -1;
+    private final Panel panel;
     public File selected_folder;
     public File[] files;
     public ArrayList<JPanel> cards = new ArrayList<>();
     
-    public TileList(){
+    public TileList(Panel panel){
+
+        this.panel = panel;
 
         main_panel = new JPanel();
         main_panel.setLayout(new GridLayout(0, 1));
 
-        add_btn = new JButton("Add more tiles");
+        add_btn = new JButton("Add tiles");
         add_btn.setBackground(Color.BLACK);
         add_btn.setForeground(Color.WHITE);
 
         main_panel.add(add_btn);
-
-        initialize_list();
 
         //just learned 0 is for multiple columns, I was used to assuming -1 for infinites
         this.setLayout(new GridLayout(0, 1));
@@ -83,16 +84,9 @@ public class TileList extends JFrame {
         this.setLocation(1135, 200);
         this.setResizable(true);
         this.setFocusable(true);
-        this.pack();
+        //pack messes things up
+        //this.pack();
         this.setVisible(true);
-    }
-
-    public void initialize_list(){
-        System.out.println("Intializing");
-        selected_folder = new File("C:\\Users\\User\\Desktop\\Java-2D-Game-Collab\\assets\\map_tiles");
-        files = selected_folder.listFiles();
-        
-        load_cards();
     }
 
     public void refresh_list(){
@@ -169,7 +163,7 @@ public class TileList extends JFrame {
                     mini_grid.add(solid_check);
 
                     new_panel.add(mini_grid);
-                    new_panel.addMouseListener(new TileHandler(tile, texture_name));
+                    new_panel.addMouseListener(new CardHandler(panel, tile, texture_name));
 
                     cards.add(new_panel);
                 }
