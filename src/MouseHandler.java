@@ -39,7 +39,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
         is_pressed = true;
         switch(e.getButton()){
             case 1 -> left_pressed = true;
-            case 2 -> middle_pressed = true;
+            case 2 -> middle_pressed = !middle_pressed;
             case 3 -> right_pressed = true;
         }
     }
@@ -47,12 +47,11 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     @Override
     public void mouseReleased(MouseEvent e) {
         //System.out.println("I am released");
-        is_clicked = false;
+
         is_pressed = false;
         is_dragged = false;
         switch(e.getButton()){
             case 1 -> left_pressed = false;
-            case 2 -> middle_pressed = false;
             case 3 -> right_pressed = false;
         }
         mouse_x = recent_x;

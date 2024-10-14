@@ -63,13 +63,21 @@ public class Grid {
                         screen_x = tile_x - cam.x_pos + cam.screen_x;    
                         screen_y = tile_y - cam.y_pos + cam.screen_y; 
 
-                        //G.drawRect(screen_x, screen_y, tile_size, tile_size);
+                        //handle placing of tiles
                         if(mouse.is_clicked){
                             if(
+                                //check if mouse coordinates matches with the tile's screen coords
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
                                 (mouse.tile_y > screen_y && mouse.tile_y < screen_y + tile_size)
                             ){
+                                //if so, that means, the mouse is pointing at the tile, place it
                                 tiles[grid_row][grid_col] = tile;
+                                //replacing the tile in the tiles array that will draw on the grid
+
+                                //handle drawing mode
+                                if(!mouse.middle_pressed){
+                                    mouse.is_clicked = false;
+                                }
                             }
                         }
                         

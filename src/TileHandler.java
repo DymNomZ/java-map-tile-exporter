@@ -1,8 +1,11 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class TileHandler {
 
+    private BufferedImage blank = null;
     private int tile_size, scale, prev_x, prev_y;
     public int x_pos, y_pos, screen_x = 0, screen_y = 0;
     public int map_length, map_height;
@@ -14,12 +17,16 @@ public class TileHandler {
     ){
         this.tile_size = tile_size;
         this.scale = scale;
-        //ignore for now
         x_pos = (map_length * tile_size) / 2;
         y_pos = (map_height * tile_size) / 2;
         prev_x = x_pos;
         prev_y = y_pos;
-        //
+
+        try {
+            blank = ImageIO.read(getClass().getResourceAsStream("void.png"));
+        } catch (IOException e) {
+            System.out.println("Error loading void tile");
+        }
     }
 
     public void update_position(MouseHandler mouse, int new_scale, int def_tile_size){
@@ -63,6 +70,9 @@ public class TileHandler {
         int scale, int def_tile_size, 
         BufferedImage tile
     ){
-        G.drawImage(tile, screen_x, screen_y, tile_size, tile_size, null);
+        //check if it is not void tile, otherwise, not render, void tile represents nothing is selected
+        if(tile != blank){
+            G.drawImage(tile, screen_x, screen_y, tile_size, tile_size, null);
+        }
     }
 }

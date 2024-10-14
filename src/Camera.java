@@ -63,7 +63,7 @@ public class Camera {
         }
 
         //Handles dragging movement
-        if(mouse.is_dragged && mouse.left_pressed){
+        if(mouse.is_dragged && mouse.right_pressed){
 
             if(mouse.clicked_x > mouse.mouse_x) delta_x = 10;
             else if(mouse.clicked_x < mouse.mouse_x) delta_x = -10;
