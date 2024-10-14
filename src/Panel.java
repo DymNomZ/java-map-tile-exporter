@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.Buffer;
-
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -23,6 +21,7 @@ public class Panel extends JPanel {
 
     private BufferedImage tile_image = null;
     private BufferedImage blank = null;
+    private int tile_index = 0;
 
     private Camera cam = new Camera(
         SCREEN_WIDTH, SCREEN_HEIGHT, 
@@ -65,13 +64,21 @@ public class Panel extends JPanel {
         repaint();
     }
 
-    public void get_selected_tile(BufferedImage tile_image){
+    public void get_selected_tile(BufferedImage tile_image, int tile_index){
         //check if received tile_image is the same as previous, meaning, you are deselecting
         if(this.tile_image == tile_image){
             this.tile_image = blank;
+            this.tile_index = 0;
         }
         //else assign the new one
-        else this.tile_image = tile_image;
+        else{
+            this.tile_image = tile_image;
+            this.tile_index = tile_index;
+        }
+    }
+
+    public int[][] get_tile_data(){
+        return grid.get_tile_data();
     }
 
     private final ActionListener timer_listener = new ActionListener() {
@@ -98,7 +105,8 @@ public class Panel extends JPanel {
         super.paintComponent(g);
         grid.display(
             g, cam, scale, DEF_TILE_SIZE, 
-            max_map_col, max_map_row, tile_image, mouse
+            max_map_col, max_map_row, tile_image, mouse, 
+            tile_index
         );
         //cam.debug_display(g, scale, DEF_TILE_SIZE);
         tile.display_tile(g, scale, DEF_TILE_SIZE, tile_image);

@@ -4,7 +4,11 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,9 +20,12 @@ public class MapSettings extends JFrame {
     private final JLabel length, height, header;
     private final JTextArea note;
     private final JTextField map_length, map_height;
-    private final JButton submit_btn;
+    private final JButton resize_btn, save_btn;
     private final JPanel panel1;
-    private final ActionListener click_listener;
+    private JFileChooser file_chooser = null;
+    private final ActionListener resize_listener, save_listener;
+    private int[][] tile_data;
+    public File selected_folder;
 
     public MapSettings(Panel panel){
 
@@ -41,10 +48,13 @@ public class MapSettings extends JFrame {
         
         map_length = new JTextField();
         map_height = new JTextField();
-        submit_btn = new JButton("Resize");
+        resize_btn = new JButton("Resize");
+        save_btn = new JButton("Save");
 
-        submit_btn.setBackground(Color.BLACK);
-        submit_btn.setForeground(Color.WHITE);
+        resize_btn.setBackground(Color.BLACK);
+        resize_btn.setForeground(Color.WHITE);
+        save_btn.setBackground(Color.BLACK);
+        save_btn.setForeground(Color.WHITE);
 
         map_length.setFont(new Font("Consolas", Font.PLAIN, 25));
         map_height.setFont(new Font("Consolas", Font.PLAIN, 25));
@@ -70,8 +80,9 @@ public class MapSettings extends JFrame {
         panel1.add(height);
         panel1.add(map_height);
         add(panel1);
-        add(submit_btn);
+        add(resize_btn);
         add(note);
+        add(save_btn);
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setTitle("Settings");
@@ -82,22 +93,65 @@ public class MapSettings extends JFrame {
         this.setFocusable(true);
         this.setVisible(true);
 
-        click_listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                if(e.getSource() == submit_btn){
-                    String l = map_length.getText();
-                    String h = map_height.getText();
-                    if(l.length() != 0 && h.length() != 0){
-                        int len = Integer.parseInt(l);
-                        int hei = Integer.parseInt(h);
-                        panel.set_dimensions(len, hei);
-                    }
+        //lambdaed, handling resizing
+        resize_listener = (ActionEvent e) -> {
+            if(e.getSource() == resize_btn){
+                String l = map_length.getText();
+                String h = map_height.getText();
+                if(l.length() != 0 && h.length() != 0){
+                    int len = Integer.parseInt(l);
+                    int hei = Integer.parseInt(h);
+                    panel.set_dimensions(len, hei);
                 }
             }
         };
 
-        submit_btn.addActionListener(click_listener);
+        //lamdaed, handle saving
+        save_listener = (ActionEvent e) -> {
+            file_chooser = new JFileChooser();
+            file_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            
+            int return_value = file_chooser.showOpenDialog(null);
+            if (return_value == JFileChooser.APPROVE_OPTION) {
+                
+                selected_folder = file_chooser.getSelectedFile();
+                System.out.println("Selected folder: " + selected_folder);
+                
+                tile_data = panel.get_tile_data();
+                
+                //debug check print
+                // for(int i = 0; i < panel.max_map_row; i++){
+                //     for(int j = 0; j < panel.max_map_row; j++){
+                //         System.out.print(tile_data[i][j] + " ");
+                //     }
+                //     System.err.println(" ");
+                // }
+
+                String map_name = "output.txt";
+                File outputFile = new File(selected_folder, map_name);
+
+                try {
+                    FileWriter writer = new FileWriter(outputFile);
+                    
+                    for (int i = 0; i < tile_data.length; i++) {
+                        for(int j = 0; j < tile_data[i].length; j++) {
+                            writer.write(tile_data[i][j] + " ");
+                        }
+                        writer.write("\n");
+                    }
+                    writer.close();
+                    System.out.println("File created successfully!");
+
+                //named it ex cause e is already defined on the interface above
+                } catch (IOException ex) {
+                    System.out.println("Error saving map");
+                }
+                
+            }
+        };
+
+        resize_btn.addActionListener(resize_listener);
+        save_btn.addActionListener(save_listener);
     }
     
 }

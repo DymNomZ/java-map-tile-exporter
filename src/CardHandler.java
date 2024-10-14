@@ -1,15 +1,22 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import javax.swing.JTextField;
 
 public class CardHandler implements MouseListener {
     private Panel panel;
+    private JTextField input;
     public BufferedImage tile;
     public String tile_name;
+    public int index = 0;
     public boolean is_selected = false;
 
-    public CardHandler(Panel panel, BufferedImage tile, String tile_name){
+    public CardHandler(
+        Panel panel, BufferedImage tile, 
+        String tile_name, JTextField input
+    ){
         this.panel = panel;
+        this.input = input;
         this.tile = tile;
         this.tile_name = tile_name;
     }
@@ -17,7 +24,14 @@ public class CardHandler implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         System.out.println("Selected Tile: " + tile_name);
-        panel.get_selected_tile(tile);
+
+        //handle no index inputted, default to zero
+        if(!(input.getText().length() == 0)){
+            index = Integer.parseInt(input.getText());
+        }
+
+        System.out.println("Assigned index: " + index);
+        panel.get_selected_tile(tile, index);
     }
 
     @Override

@@ -163,7 +163,13 @@ public class TileList extends JFrame {
                     mini_grid.add(solid_check);
 
                     new_panel.add(mini_grid);
-                    new_panel.addMouseListener(new CardHandler(panel, tile, texture_name));
+                    new_panel.addMouseListener(
+                        new CardHandler(
+                            panel, tile, 
+                            texture_name, 
+                            idx_input
+                        )
+                    );
 
                     cards.add(new_panel);
                 }

@@ -10,6 +10,7 @@ public class Grid {
     private int map_length, map_height;
     BufferedImage image = null;
     BufferedImage[][] tiles;
+    int[][] indexes;
     
     public Grid(int col, int row){
         try {
@@ -21,12 +22,18 @@ public class Grid {
         initialize_grid(col, row);
     }
 
+    public int[][] get_tile_data(){
+        return indexes;
+    }
+
     public void initialize_grid(int col, int row){
         //System.out.println(col + " " + row);
         tiles = new BufferedImage[row][col];
+        indexes = new int[row][col];
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
                 tiles[i][j] = image;
+                indexes[i][j] = 0;
             }
         }
     }
@@ -35,7 +42,8 @@ public class Grid {
         Graphics G, Camera cam, 
         int scale, int def_tile_size,
         int max_map_col, int max_map_row,
-        BufferedImage tile, MouseHandler mouse
+        BufferedImage tile, MouseHandler mouse, 
+        int tile_index
     ){
 
         map_length = max_map_col;
@@ -72,6 +80,7 @@ public class Grid {
                             ){
                                 //if so, that means, the mouse is pointing at the tile, place it
                                 tiles[grid_row][grid_col] = tile;
+                                indexes[grid_row][grid_col] = tile_index;
                                 //replacing the tile in the tiles array that will draw on the grid
 
                                 //handle drawing mode
