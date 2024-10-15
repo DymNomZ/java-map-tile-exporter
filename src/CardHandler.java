@@ -6,24 +6,22 @@ public class CardHandler implements MouseListener {
     private final Panel panel;
     private final JTextField input;
     public Tile tile;
-    public String tile_name;
     public int index = 0;
     public boolean is_selected = false;
 
     public CardHandler(
         Panel panel, Tile tile, 
-        String tile_name, JTextField input
+        JTextField input
     ){
         this.panel = panel;
         this.input = input;
         this.tile = tile;
-        this.tile_name = tile_name;
 
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("Selected Tile: " + tile_name);
+        System.out.println("Selected Tile: " + tile.name);
 
         //handle no index inputted, default to zero
         if(!(input.getText().length() == 0)){

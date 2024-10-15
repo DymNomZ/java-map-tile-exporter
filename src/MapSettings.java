@@ -5,8 +5,15 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -17,15 +24,16 @@ import javax.swing.JTextField;
 public class MapSettings extends JFrame {
 
     private final Panel panel;
-    private final JLabel length, height, header, map_name_label;
+    private final JLabel length, height, header, map_name_label, load_map;
     private final JTextArea note;
     private final JTextField map_length, map_height, map_name_input;
-    private final JButton resize_btn, save_btn;
-    private final JPanel panel1, panel2;
+    private final JButton resize_btn, save_btn, load_btn;
+    private final JPanel panel1, panel2, panel3;
     private JFileChooser file_chooser = null;
-    private final ActionListener resize_listener, save_listener;
+    private final ActionListener resize_listener, save_listener, load_listener;
     private Tile[][] map_data;
-    public File selected_folder;
+    private ArrayList<TileData> tile_data;
+    public File selected_folder, selected_zip;
 
     public MapSettings(Panel panel){
 
@@ -34,6 +42,7 @@ public class MapSettings extends JFrame {
         length = new JLabel("Map Length (in Tiles)");
         height = new JLabel("Map Height (in Tiles)");
         map_name_label = new JLabel("v Enter map name v");
+        load_map = new JLabel("> Load Map >");
         header = new JLabel("v Enter map dimenstions v - Max n tiles: 500");
         note = new JTextArea("""
             Note that upon clicking resize,  it will overwrite the current map data. 
@@ -43,6 +52,7 @@ public class MapSettings extends JFrame {
         length.setForeground(Color.WHITE);
         height.setForeground(Color.WHITE);
         map_name_label.setForeground(Color.WHITE);
+        load_map.setForeground(Color.WHITE);
         header.setForeground(Color.WHITE);
         note.setForeground(Color.WHITE);
         note.setBackground(Color.BLACK);
@@ -53,11 +63,14 @@ public class MapSettings extends JFrame {
         map_name_input = new JTextField();
         resize_btn = new JButton("Resize");
         save_btn = new JButton("Save");
+        load_btn = new JButton("Load");
 
         resize_btn.setBackground(Color.BLACK);
         resize_btn.setForeground(Color.WHITE);
         save_btn.setBackground(Color.BLACK);
         save_btn.setForeground(Color.WHITE);
+        load_btn.setBackground(Color.BLACK);
+        load_btn.setForeground(Color.WHITE);
 
         map_length.setFont(new Font("Consolas", Font.PLAIN, 25));
         map_height.setFont(new Font("Consolas", Font.PLAIN, 25));
@@ -82,6 +95,9 @@ public class MapSettings extends JFrame {
         panel2 = new JPanel();
         panel2.setLayout(new GridLayout(1, 1, 10, 5));
         panel2.setBackground(Color.BLACK);
+        panel3 = new JPanel();
+        panel3.setLayout(new GridLayout(1, 1, 10, 5));
+        panel3.setBackground(Color.BLACK);
 
         setLayout(new FlowLayout());
 
@@ -98,11 +114,14 @@ public class MapSettings extends JFrame {
         panel2.add(map_name_input);
         add(panel2);
         add(save_btn);
+        panel3.add(load_map);
+        panel3.add(load_btn);
+        add(panel3);
 
         //window settings
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setTitle("Settings");
-        this.setSize(300, 350);
+        this.setSize(300, 425);
         this.getContentPane().setBackground(Color.BLACK);
         this.setLocation(25, 0);
         this.setResizable(false);
@@ -135,43 +154,148 @@ public class MapSettings extends JFrame {
                 
                 //get finalized map
                 map_data = panel.get_map_data();
-                
-                //debug check print
-                // for(int i = 0; i < panel.max_map_row; i++){
-                //     for(int j = 0; j < panel.max_map_row; j++){
-                //         System.out.print(tile_data[i][j] + " ");
-                //     }
-                //     System.err.println(" ");
-                // }
 
                 //get map_name from textfield
                 String map_name = map_name_input.getText();
-                map_name += ".txt";
-                
-                File outputFile = new File(selected_folder, map_name);
 
+                //Zip output to selected directory
+                File output_zip = new File(selected_folder, map_name + ".zip");
+                
+                // Create a ZipOutputStream
+                FileOutputStream fos = null;
                 try {
-                    FileWriter writer = new FileWriter(outputFile);
-                    
+                    fos = new FileOutputStream(output_zip);
+                } catch (FileNotFoundException e1) {
+                    System.out.println("Selected directory does not exist!");
+                }
+                ZipOutputStream zos = new ZipOutputStream(fos);
+
+                // Create a temporary file to store the integer
+                try {
+                    File temp_file = new File("temp.txt");
+                    FileWriter writer = new FileWriter(temp_file);
+
                     for (int i = 0; i < map_data.length; i++) {
                         for(int j = 0; j < map_data[i].length; j++) {
+
+                            //write to txt
                             writer.write(map_data[i][j].index + " ");
+
                         }
                         writer.write("\n");
                     }
                     writer.close();
-                    System.out.println("File created successfully!");
 
-                //named it ex cause e is already defined on the interface above
+                    // Create a ZipEntry for the map txt file
+                    zos.putNextEntry(new ZipEntry(map_name + ".txt"));
+
+                    FileInputStream fis = new FileInputStream(temp_file);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fis.read(buffer)) != -1) {
+                        zos.write(buffer, 0, length);
+                    }
+                    fis.close();
+
+                    zos.closeEntry();
+                    temp_file.delete();
                 } catch (IOException ex) {
-                    System.out.println("Error saving map");
+                }
+
+                tile_data = panel.get_tile_cards();
+
+                //ZipEntry for tiles
+                for(TileData t : tile_data){
+                    try {
+                        zos.putNextEntry(new ZipEntry(t.tile.name + ".png"));
+                        // Write the image data to the ZIP file
+                        ImageIO.write(t.tile.image, "png", zos);
+                        zos.closeEntry();
+                    } catch (IOException e1) {
+                    }
+                }
+
+                //ZipEntry for tile data
+                try {
+                    File temp_file = new File("temp.txt");
+                    FileWriter writer = new FileWriter(temp_file);
+
+                    for(TileData t: tile_data){
+                        writer.write(t.tile.index + "\n");
+                    }
+                    writer.close();
+
+                    // Create a ZipEntry for tile data
+                    zos.putNextEntry(new ZipEntry("tile_data.txt"));
+
+                    FileInputStream fis = new FileInputStream(temp_file);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fis.read(buffer)) != -1) {
+                        zos.write(buffer, 0, length);
+                    }
+                    fis.close();
+
+                    zos.closeEntry();
+                    temp_file.delete();
+                } catch (IOException ex) {
+                }
+
+                // Close ZipOutputStream
+                try {
+                    zos.close();
+                } catch (IOException e1) {
+                }
+
+                System.out.println("Zip created successfully!");
+            }
+        };
+
+        //lambdaed, handle loading
+        load_listener = (ActionEvent e) -> {
+            //load test
+            try {
+                file_chooser = new JFileChooser();
+                file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                
+                int return_value = file_chooser.showOpenDialog(null);
+                if (return_value == JFileChooser.APPROVE_OPTION) {
+                    selected_zip = file_chooser.getSelectedFile();
+                    System.out.println("Selected zip: " + selected_zip);
+
+                    String zipFilePath = "src\\testing1.zip";
+                    String entryName = "testing1.txt";
                 }
                 
+                
+                
+    
+                ZipFile zipFile = new ZipFile(zipFilePath);
+                ZipEntry entry = zipFile.getEntry(entryName);
+    
+                if (entry != null) {
+                    InputStream inputStream = zipFile.getInputStream(entry);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+                    reader.close();
+                    inputStream.close(); 
+    
+                } else {
+                    System.out.println("Entry not found in the ZIP file.");
+                }
+    
+                zipFile.close();
+            } catch (IOException e3) {
+                System.out.println("HMMM");
             }
         };
 
         resize_btn.addActionListener(resize_listener);
         save_btn.addActionListener(save_listener);
+        load_btn.addActionListener(load_listener);
     }
     
 }

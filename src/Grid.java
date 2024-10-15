@@ -22,7 +22,7 @@ public class Grid {
         tiles = new Tile[row][col];
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
-                tiles[i][j] = new Tile("void.png", 0);
+                tiles[i][j] = new Tile("void.png", 0, "void");
             }
         }
     }

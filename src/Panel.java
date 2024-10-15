@@ -49,8 +49,8 @@ public class Panel extends JPanel {
         this.addMouseListener(mouse);
         this.addMouseWheelListener(mouse);
 
-        tile = new Tile("void.png", 0);
-        blank = new Tile("void.png", 0);
+        tile = new Tile("void.png", 0, "void");
+        blank = new Tile("void.png", 0, "void");
     }
 
     public void add_tile_data(Tile tile, JTextField input){
@@ -79,7 +79,6 @@ public class Panel extends JPanel {
         //check if received tile is the same as previous, meaning, you are deselecting
         if(this.tile == selected_tile){
             this.tile = blank;
-            this.tile.index = 0;
         }
         //else assign the new one
         else{
@@ -113,6 +112,10 @@ public class Panel extends JPanel {
         //send finalized map tiles for saving
         finalize_tiles();
         return map_tiles;
+    }
+
+    public ArrayList<TileData> get_tile_cards(){
+        return tile_data;
     }
 
     private final ActionListener timer_listener = new ActionListener() {

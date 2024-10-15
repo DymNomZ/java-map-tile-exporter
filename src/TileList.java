@@ -101,14 +101,15 @@ public class TileList extends JFrame {
 
                     //System.out.println(file.getName());
 
-                    tile = new Tile(file.getAbsolutePath(), 0);
-
                     new_panel = new JPanel();
                     new_panel.setBackground(Color.BLACK);
                     new_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 10));
 
                     dot_idx = file.getName().lastIndexOf('.');
                     texture_name = file.getName().substring(0, dot_idx);
+
+                    //create tile
+                    tile = new Tile(file.getAbsolutePath(), 0, texture_name);
 
                     tile_image = new JLabel(new ImageIcon(tile.image));
                     tile_name = new JLabel(texture_name);
@@ -161,8 +162,7 @@ public class TileList extends JFrame {
                     //Handles what tile is selecting for placing on grid
                     new_panel.addMouseListener(
                         new CardHandler(
-                            panel, tile, 
-                            texture_name, 
+                            panel, tile,
                             idx_input
                         )
                     );
