@@ -4,14 +4,20 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -27,17 +33,23 @@ public class MapSettings extends JFrame {
     private final JLabel length, height, header, map_name_label, load_map;
     private final JTextArea note;
     private final JTextField map_length, map_height, map_name_input;
-    private final JButton resize_btn, save_btn, load_btn;
+    private final JButton resize_btn, save_btn;
     private final JPanel panel1, panel2, panel3;
     private JFileChooser file_chooser = null;
     private final ActionListener resize_listener, save_listener, load_listener;
     private Tile[][] map_data;
-    private ArrayList<TileData> tile_data;
+    private int[][] loaded_map_indexes, tile_data_indexes;
+    private ArrayList<TileData> tile_data, loaded_tile_data;
+    private TileList tile_list = null;
+    private int curr_idx = 0;
     public File selected_folder, selected_zip;
+    public final JButton load_btn;
 
     public MapSettings(Panel panel){
 
         this.panel = panel;
+
+        loaded_tile_data = new ArrayList<>();
 
         length = new JLabel("Map Length (in Tiles)");
         height = new JLabel("Map Height (in Tiles)");
@@ -187,7 +199,7 @@ public class MapSettings extends JFrame {
                     writer.close();
 
                     // Create a ZipEntry for the map txt file
-                    zos.putNextEntry(new ZipEntry(map_name + ".txt"));
+                    zos.putNextEntry(new ZipEntry(map_name + "$.txt"));
 
                     FileInputStream fis = new FileInputStream(temp_file);
                     byte[] buffer = new byte[1024];
@@ -202,6 +214,7 @@ public class MapSettings extends JFrame {
                 } catch (IOException ex) {
                 }
 
+                //get tile data from tile list
                 tile_data = panel.get_tile_cards();
 
                 //ZipEntry for tiles
@@ -253,49 +266,190 @@ public class MapSettings extends JFrame {
 
         //lambdaed, handle loading
         load_listener = (ActionEvent e) -> {
-            //load test
-            try {
-                file_chooser = new JFileChooser();
-                file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                
-                int return_value = file_chooser.showOpenDialog(null);
-                if (return_value == JFileChooser.APPROVE_OPTION) {
-                    selected_zip = file_chooser.getSelectedFile();
-                    System.out.println("Selected zip: " + selected_zip);
+            file_chooser = new JFileChooser();
+            file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            
+            int return_value = file_chooser.showOpenDialog(null);
+            if (return_value == JFileChooser.APPROVE_OPTION) {
+                selected_zip = file_chooser.getSelectedFile();
+                System.out.println("Selected zip: " + selected_zip);
 
-                    String zipFilePath = "src\\testing1.zip";
-                    String entryName = "testing1.txt";
-                }
-                
-                
-                
-    
-                ZipFile zipFile = new ZipFile(zipFilePath);
-                ZipEntry entry = zipFile.getEntry(entryName);
-    
-                if (entry != null) {
-                    InputStream inputStream = zipFile.getInputStream(entry);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
+                // Create a ZipFile object
+                ZipFile zip_file;
+                try {
+
+                    zip_file = new ZipFile(selected_zip.getAbsolutePath());
+
+                    // Get an enumeration of the entries in the zip file
+                    Enumeration<? extends ZipEntry> entries = zip_file.entries();
+
+                    // Iterate over the entries and print their names
+                    System.out.println("Zip contents: ");
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        //System.out.println(entry.getName());
+
+                        //read operations:
+                        if(entry.getName().endsWith("data.txt")){
+                            read_tile_data(zip_file, entry);
+                        }
+                        if(entry.getName().endsWith("$.txt")){
+                            read_map(zip_file, entry);
+                        }
                     }
-                    reader.close();
-                    inputStream.close(); 
-    
-                } else {
-                    System.out.println("Entry not found in the ZIP file.");
+
+                    //load for pngs
+                    entries = zip_file.entries();
+                    while (entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        //System.out.println(entry.getName());
+
+                        if(entry.getName().endsWith(".png")){
+                            read_images(zip_file, entry);
+                        }
+                    }
+
+                    //reset traversing index
+                    curr_idx = 0;
+
+                    //Check print
+                    System.out.println(loaded_tile_data.size());
+                    for(TileData t : loaded_tile_data){
+                        System.out.println(t.tile.name + " " + t.tile.index + " " + t.input.getText());
+                    }
+
+                    zip_file.close();
+
+                    } catch (IOException ex) {
+                    }
                 }
+
+            tile_list.load_map(loaded_tile_data);
+
+            //load the map to the grid
+            panel.display_loaded_map_tiles(loaded_map_indexes, loaded_tile_data);
     
-                zipFile.close();
-            } catch (IOException e3) {
-                System.out.println("HMMM");
-            }
         };
 
         resize_btn.addActionListener(resize_listener);
         save_btn.addActionListener(save_listener);
         load_btn.addActionListener(load_listener);
+    }
+
+    public void set_tile_list(TileList tile_list){
+        this.tile_list = tile_list;
+    }
+
+    public void read_images(ZipFile zip, ZipEntry image){
+
+        InputStream image_data_stream;
+        BufferedImage tile_image;
+        String tile_name = image.getName().substring(0, image.getName().lastIndexOf('.'));
+
+        try {
+            image_data_stream = zip.getInputStream(image);
+            tile_image = ImageIO.read(image_data_stream);
+            image_data_stream.close();
+
+            loaded_tile_data.add(
+                new TileData(
+                    new Tile(tile_data_indexes[curr_idx][0], tile_name, tile_image), 
+                    new JTextField(tile_data_indexes[curr_idx][0])
+                )
+            );
+
+            curr_idx++;
+
+        } catch (IOException ex) {
+        }
+
+    }
+
+    public void read_tile_data(ZipFile zip, ZipEntry tile_data){
+        
+        InputStream tile_data_stream;
+        BufferedReader reader;
+        try {
+            tile_data_stream = zip.getInputStream(tile_data);
+            reader = new BufferedReader(new InputStreamReader(tile_data_stream));
+
+            String line = reader.readLine();
+            int td_h = 0;
+            int td_l = 1; //constant 1 cause only indexes for now, no solid data and others
+
+            do{
+                td_h++;
+            }while ((reader.readLine()) != null);
+            System.out.println("Tile Data Length: " + td_l + " Height: " + td_h);
+            reader.close();
+
+            //new tile_data cause previous inputs were already consumed by reader
+            //new reader cause the previous one is at the end of the file = null
+            tile_data_stream = zip.getInputStream(tile_data);
+            reader = new BufferedReader(new InputStreamReader(tile_data_stream));
+
+            tile_data_indexes = new int[td_h][td_l];
+
+            for(int i = 0; i < td_h; i++){
+
+                String[] raw_indexes = reader.readLine().split(" ");
+
+                for(int j = 0; j < td_l; j++) {
+                    //System.out.println(raw_indexes[j]);
+                    tile_data_indexes[i][j] = Integer.parseInt(raw_indexes[j]);
+                }
+
+            }
+
+            reader.close();
+            tile_data_stream.close();
+
+        } catch (IOException ex) {
+        }
+    }
+
+    public void read_map(ZipFile zip, ZipEntry map){
+
+        InputStream map_data_stream;
+        BufferedReader reader;
+        try {
+            map_data_stream = zip.getInputStream(map);
+            reader = new BufferedReader(new InputStreamReader(map_data_stream));
+
+            String line = reader.readLine();
+            int map_h = 0;
+            int map_l = line.length() / 2; //because of spaces
+
+            do{
+                map_h++;
+            }while ((reader.readLine()) != null);
+            System.out.println("Map Length: " + map_l + " Height: " + map_h);
+            reader.close();
+
+            //new map cause previous inputs were already consumed by reader
+            //new reader cause the previous one is at the end of the file = null
+            map_data_stream = zip.getInputStream(map);
+            reader = new BufferedReader(new InputStreamReader(map_data_stream));
+
+            loaded_map_indexes = new int[map_h][map_l];
+
+            for(int i = 0; i < map_h; i++){
+
+                String[] raw_indexes = reader.readLine().split(" ");
+
+                for(int j = 0; j < map_l; j++) {
+                    //System.out.println(raw_indexes[j]);
+                    loaded_map_indexes[i][j] = Integer.parseInt(raw_indexes[j]);
+                }
+
+            }
+
+            reader.close();
+            map_data_stream.close();
+
+        } catch (IOException ex) {
+        }
+        
     }
     
 }

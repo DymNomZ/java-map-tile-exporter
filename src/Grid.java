@@ -1,5 +1,6 @@
 
 import java.awt.Graphics;
+import java.util.ArrayList;
 
 public class Grid {
     
@@ -23,6 +24,31 @@ public class Grid {
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
                 tiles[i][j] = new Tile("void.png", 0, "void");
+            }
+        }
+    }
+
+    public void load_map_tiles(int[][] tile_indexes, ArrayList<TileData> tile_data){
+
+        int map_l = tile_indexes[0].length;
+        int map_h = tile_indexes.length;
+
+        tiles = new Tile[map_h][map_l];
+        for(int i = 0; i < map_h; i++){
+            for(int j = 0; j < map_l; j++){
+                
+                //check which tile in tile data matches index
+                if(tile_indexes[i][j] != 0){
+                    for(TileData td : tile_data){
+                        if(td.tile.index == tile_indexes[i][j]){
+                            tiles[i][j] = td.tile;
+                            break;
+                        }
+                    }
+                }else{
+                    tiles[i][j] = new Tile("void.png", 0, "void");
+                }
+                    
             }
         }
     }

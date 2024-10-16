@@ -53,6 +53,10 @@ public class Panel extends JPanel {
         blank = new Tile("void.png", 0, "void");
     }
 
+    public void clear_tile_data(){
+        tile_data.clear();
+    }
+
     public void add_tile_data(Tile tile, JTextField input){
         //add tiles and data from tile list
         tile_data.add(new TileData(tile, input));
@@ -73,6 +77,10 @@ public class Panel extends JPanel {
         //re-initialize_grid, wiping off map
         grid.initialize_grid(col, row);
         repaint();
+    }
+
+    public void display_loaded_map_tiles(int[][] map_indexes, ArrayList<TileData> tile_data){
+        grid.load_map_tiles(map_indexes, tile_data);
     }
 
     public void get_selected_tile(Tile selected_tile, int new_index){

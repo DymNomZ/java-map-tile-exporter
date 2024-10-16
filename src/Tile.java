@@ -17,4 +17,11 @@ public class Tile {
         this.index = index;
         this.name = name;
     }
+
+    //Second constructor for loading
+    public Tile(int index, String name, BufferedImage image){
+        this.image = image;
+        this.index = index;
+        this.name = name;
+    }
 }
