@@ -73,13 +73,19 @@ public class Panel extends JPanel {
             (max_map_col * tile_size) / 2, 
             (max_map_row * tile_size) / 2
         );
+    }
 
+    public void repaint_grid(int col, int row){
         //re-initialize_grid, wiping off map
         grid.initialize_grid(col, row);
         repaint();
     }
 
     public void display_loaded_map_tiles(int[][] map_indexes, ArrayList<TileData> tile_data){
+
+        //update dimensions
+        set_dimensions(map_indexes[0].length, map_indexes.length);
+
         grid.load_map_tiles(map_indexes, tile_data);
     }
 

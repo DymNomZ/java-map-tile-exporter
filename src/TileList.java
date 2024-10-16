@@ -161,6 +161,7 @@ public class TileList extends JFrame {
             idx_label.setForeground(Color.WHITE);
 
             idx_input = td.input;
+            idx_input.setText(Integer.toString(td.tile.index));
             idx_input.addKeyListener(char_consumer);
 
             solid_label = new JLabel("solid");
@@ -200,7 +201,7 @@ public class TileList extends JFrame {
             );
 
             //add to tile data array in panel for finalizing purposes
-            panel.add_tile_data(tile, idx_input);
+            panel.add_tile_data(td.tile, idx_input);
             cards.add(new_panel);
 
             //display selection of tiles on window
@@ -221,7 +222,7 @@ public class TileList extends JFrame {
 
                 if(file.getName().endsWith(".png") && !check_duplicates(texture_name)){
 
-                    System.out.println(file.getName());
+                    //System.out.println(file.getName());
 
                     new_panel = new JPanel();
                     new_panel.setBackground(Color.BLACK);

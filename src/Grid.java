@@ -30,12 +30,12 @@ public class Grid {
 
     public void load_map_tiles(int[][] tile_indexes, ArrayList<TileData> tile_data){
 
-        int map_l = tile_indexes[0].length;
-        int map_h = tile_indexes.length;
+        map_length = tile_indexes[0].length;
+        map_height = tile_indexes.length;
 
-        tiles = new Tile[map_h][map_l];
-        for(int i = 0; i < map_h; i++){
-            for(int j = 0; j < map_l; j++){
+        tiles = new Tile[map_height][map_length];
+        for(int i = 0; i < map_height; i++){
+            for(int j = 0; j < map_length; j++){
                 
                 //check which tile in tile data matches index
                 if(tile_indexes[i][j] != 0){

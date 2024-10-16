@@ -149,6 +149,7 @@ public class MapSettings extends JFrame {
                     int len = Integer.parseInt(l);
                     int hei = Integer.parseInt(h);
                     panel.set_dimensions(len, hei);
+                    panel.repaint_grid(len, hei);
                 }
             }
         };
@@ -380,7 +381,7 @@ public class MapSettings extends JFrame {
             do{
                 td_h++;
             }while ((reader.readLine()) != null);
-            System.out.println("Tile Data Length: " + td_l + " Height: " + td_h);
+            //System.out.println("Tile Data Length: " + td_l + " Height: " + td_h);
             reader.close();
 
             //new tile_data cause previous inputs were already consumed by reader
@@ -423,7 +424,7 @@ public class MapSettings extends JFrame {
             do{
                 map_h++;
             }while ((reader.readLine()) != null);
-            System.out.println("Map Length: " + map_l + " Height: " + map_h);
+            //System.out.println("Map Length: " + map_l + " Height: " + map_h);
             reader.close();
 
             //new map cause previous inputs were already consumed by reader
