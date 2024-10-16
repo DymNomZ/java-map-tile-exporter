@@ -49,6 +49,7 @@ public class MapSettings extends JFrame {
 
         this.panel = panel;
 
+        tile_data = new ArrayList<>();
         loaded_tile_data = new ArrayList<>();
 
         length = new JLabel("Map Length (in Tiles)");
@@ -267,6 +268,10 @@ public class MapSettings extends JFrame {
 
         //lambdaed, handle loading
         load_listener = (ActionEvent e) -> {
+
+            //clear previous tile list
+            loaded_tile_data.clear();
+
             file_chooser = new JFileChooser();
             file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             
@@ -325,10 +330,9 @@ public class MapSettings extends JFrame {
                     }
                 }
 
-            tile_list.load_map(loaded_tile_data);
-
             //load the map to the grid
             panel.display_loaded_map_tiles(loaded_map_indexes, loaded_tile_data);
+            tile_list.load_map(loaded_tile_data);
     
         };
 

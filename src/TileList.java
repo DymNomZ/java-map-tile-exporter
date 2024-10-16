@@ -118,7 +118,7 @@ public class TileList extends JFrame {
             load_cards();
         }else{
             //clear cards to load tiles of loaded map
-            panel.clear_tile_data();
+            //panel.clear_tile_data();
             cards.clear();
             main_panel.removeAll();
             main_panel.add(add_btn);
@@ -201,7 +201,7 @@ public class TileList extends JFrame {
             );
 
             //add to tile data array in panel for finalizing purposes
-            panel.add_tile_data(td.tile, idx_input);
+            //panel.add_tile_data(td.tile, idx_input);
             cards.add(new_panel);
 
             //display selection of tiles on window

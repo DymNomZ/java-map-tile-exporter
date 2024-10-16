@@ -83,6 +83,10 @@ public class Panel extends JPanel {
 
     public void display_loaded_map_tiles(int[][] map_indexes, ArrayList<TileData> tile_data){
 
+        //update tile data
+        this.tile_data.clear();
+        this.tile_data.addAll(tile_data);
+
         //update dimensions
         set_dimensions(map_indexes[0].length, map_indexes.length);
 
