@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
@@ -21,12 +22,13 @@ public class Panel extends JPanel {
     private Tile tile = null;
     private Tile blank = null;
     
-    //will hold map tiles prior to finalizing
+    //will hold map tiles for finalizing
     private Tile[][] map_tiles;
 
     //hold data of loaded tiles on tile list
-    private ArrayList<TileData> tile_data = new ArrayList<>();
-    private int idx = 0;
+    private ArrayList<TileData> loaded_tile_data = new ArrayList<>();
+    private int loaded_tile_data_idx = 0;
+    private boolean loaded_tile_solid_state = false;
 
     private Camera cam = new Camera(
         SCREEN_WIDTH, SCREEN_HEIGHT, 
@@ -49,17 +51,17 @@ public class Panel extends JPanel {
         this.addMouseListener(mouse);
         this.addMouseWheelListener(mouse);
 
-        tile = new Tile("void.png", 0, "void");
-        blank = new Tile("void.png", 0, "void");
+        tile = new Tile("void.png", 0, "void", false);
+        blank = new Tile("void.png", 0, "void", false);
     }
 
     public void clear_tile_data(){
-        tile_data.clear();
+        loaded_tile_data.clear();
     }
 
-    public void add_tile_data(Tile tile, JTextField input){
+    public void add_tile_data(Tile tile, JTextField input, JCheckBox solid_state){
         //add tiles and data from tile list
-        tile_data.add(new TileData(tile, input));
+        loaded_tile_data.add(new TileData(tile, input, solid_state));
     }
 
     public void set_dimensions(int col, int row){
@@ -84,8 +86,8 @@ public class Panel extends JPanel {
     public void display_loaded_map_tiles(int[][] map_indexes, ArrayList<TileData> tile_data){
 
         //update tile data
-        this.tile_data.clear();
-        this.tile_data.addAll(tile_data);
+        this.loaded_tile_data.clear();
+        this.loaded_tile_data.addAll(tile_data);
 
         //update dimensions
         set_dimensions(map_indexes[0].length, map_indexes.length);
@@ -108,18 +110,34 @@ public class Panel extends JPanel {
     public void finalize_tiles(){
         //finalize tiles to handle final index before writing to txt file
         //This is to ensure index is correct
+
+        //Gets the tiles on the grid
         map_tiles = grid.get_map_data();
 
-        for(TileData t : tile_data){
+        //No need to check, since ArrayList, will just not execute if empty
+        for(TileData t : loaded_tile_data){
             for(int i = 0; i < map_tiles.length; i++){
                 for(int j = 0; j < map_tiles[i].length; j++){
 
-                    if(!(t.input.getText().length() == 0)){
-                        idx = Integer.parseInt(t.input.getText());
+                    if(t.input.getText().length() != 0){
+                        loaded_tile_data_idx = Integer.parseInt(t.input.getText());
+                    }
+                    //loaded_tile_data_idx = t.tile.index;
+
+                    loaded_tile_solid_state = t.solid_state.isSelected();
+
+                    //ensure inputted index in textfield will be applied
+                    //if tile exists on the grid
+                    if(t.tile == map_tiles[i][j] && loaded_tile_data_idx != map_tiles[i][j].index){
+                        map_tiles[i][j].index = loaded_tile_data_idx;
+                    }
+                    //if not update tile index still
+                    else {
+                        t.tile.index = loaded_tile_data_idx;
                     }
 
-                    if(t.tile == map_tiles[i][j] && idx != map_tiles[i][j].index){
-                        map_tiles[i][j].index = idx;
+                    if(t.tile == map_tiles[i][j] && loaded_tile_solid_state != map_tiles[i][j].is_solid){
+                        map_tiles[i][j].is_solid = loaded_tile_solid_state;
                     }
                 }
             }
@@ -133,7 +151,7 @@ public class Panel extends JPanel {
     }
 
     public ArrayList<TileData> get_tile_cards(){
-        return tile_data;
+        return loaded_tile_data;
     }
 
     private final ActionListener timer_listener = new ActionListener() {
@@ -145,6 +163,7 @@ public class Panel extends JPanel {
 
             //dictate how much scale will change when mouse wheel is scrolled
             scale = mouse.get_scale_factor();
+            tile_size = scale * DEF_TILE_SIZE;
 
             repaint();
         }
@@ -162,7 +181,7 @@ public class Panel extends JPanel {
             max_map_col, max_map_row, tile, mouse
         );
         //cam.debug_display(g, scale, DEF_TILE_SIZE);
-        tile_handler.display_tile(g, scale, DEF_TILE_SIZE, tile);
+        tile_handler.display_tile(g, tile);
     }
 
 }

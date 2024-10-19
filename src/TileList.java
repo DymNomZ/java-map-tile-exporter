@@ -1,22 +1,8 @@
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.util.ArrayList;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
 
 public class TileList extends JFrame {
 
@@ -44,6 +30,7 @@ public class TileList extends JFrame {
         this.panel = panel;
         this.settings = settings;
 
+        //start of setting-up components
         main_panel = new JPanel();
         main_panel.setLayout(new GridLayout(0, 1));
 
@@ -61,8 +48,10 @@ public class TileList extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
+                //System.out.println(idx_input.getText().length() + " outside");
                 // Ignore non-digit characters
                 if (!Character.isDigit(c) || c == '0') {
+                    //System.out.println(idx_input.getText().length() + " inside");
                     e.consume();
                 }
             }
@@ -90,6 +79,7 @@ public class TileList extends JFrame {
         scroll_pane = new JScrollPane(main_panel);
 
         add(scroll_pane);
+        //end
 
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setTitle("Tile List");
@@ -161,23 +151,30 @@ public class TileList extends JFrame {
             idx_label.setForeground(Color.WHITE);
 
             idx_input = td.input;
-            idx_input.setText(Integer.toString(td.tile.index));
+            
+            if(td.tile.index != 0){
+                idx_input.setText(Integer.toString(td.tile.index));
+            }else{
+                idx_input.setText("0");
+            }
+            
             idx_input.addKeyListener(char_consumer);
 
             solid_label = new JLabel("solid");
             solid_label.setForeground(Color.WHITE);
 
-            solid_check = new JCheckBox();
+            solid_check = td.solid_state;
             solid_check.setBackground(Color.BLACK);
 
             //lamdaed again, handle checking
-            solid_check.addItemListener((ItemEvent e) -> {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    System.out.println("Tile is solid");
-                } else {
-                    System.out.println("Tile is not solid");
-                }
-            });
+            // solid_check.addItemListener((ItemEvent e) -> {
+            //     if (e.getStateChange() == ItemEvent.SELECTED) {
+            //         System.out.println("Tile is solid");
+                    
+            //     } else {
+            //         System.out.println("Tile is not solid");
+            //     }
+            // });
 
             new_panel.add(tile_image);
             new_panel.add(tile_name);
@@ -210,7 +207,6 @@ public class TileList extends JFrame {
 
         revalidate();
 }
-        
 
     public void load_cards(){
 
@@ -229,7 +225,7 @@ public class TileList extends JFrame {
                     new_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 10));
 
                     //create tile
-                    tile = new Tile(file.getAbsolutePath(), 0, texture_name);
+                    tile = new Tile(file.getAbsolutePath(), 0, texture_name, false);
 
                     tile_image = new JLabel(new ImageIcon(tile.image));
                     tile_name = new JLabel(texture_name);
@@ -252,8 +248,10 @@ public class TileList extends JFrame {
                     solid_check.addItemListener((ItemEvent e) -> {
                         if (e.getStateChange() == ItemEvent.SELECTED) {
                             System.out.println("Tile is solid");
+                            tile.is_solid = true;
                         } else {
                             System.out.println("Tile is not solid");
+                            tile.is_solid = false;
                         }
                     });
 
@@ -278,8 +276,8 @@ public class TileList extends JFrame {
                         )
                     );
 
-                    //add to tile data array in panel for finalizing purposes
-                    panel.add_tile_data(tile, idx_input);
+                    //add to tile data ArrayList in panel for finalizing purposes
+                    panel.add_tile_data(tile, idx_input, solid_check);
                     cards.add(new_panel);
                     //display selection of tiles on window
                     main_panel.add(new_panel);

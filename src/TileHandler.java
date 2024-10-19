@@ -70,7 +70,6 @@ public class TileHandler {
 
     public void display_tile(
         Graphics G, 
-        int scale, int def_tile_size, 
         Tile tile
     ){
         //check if it is not void tile, otherwise, not render, void tile represents nothing is selected

@@ -1,32 +1,12 @@
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
-import javax.imageio.ImageIO;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
+import java.util.zip.*;
+import javax.imageio.*;
+import javax.swing.*;
+
 public class MapSettings extends JFrame {
 
     private final Panel panel;
@@ -52,6 +32,7 @@ public class MapSettings extends JFrame {
         tile_data = new ArrayList<>();
         loaded_tile_data = new ArrayList<>();
 
+        //Start of setting-up components
         length = new JLabel("Map Length (in Tiles)");
         height = new JLabel("Map Height (in Tiles)");
         map_name_label = new JLabel("v Enter map name v");
@@ -113,6 +94,7 @@ public class MapSettings extends JFrame {
         panel3.setBackground(Color.BLACK);
 
         setLayout(new FlowLayout());
+        //end
 
         //adding components
         add(header);
@@ -130,6 +112,7 @@ public class MapSettings extends JFrame {
         panel3.add(load_map);
         panel3.add(load_btn);
         add(panel3);
+        //end
 
         //window settings
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -146,6 +129,7 @@ public class MapSettings extends JFrame {
             if(e.getSource() == resize_btn){
                 String l = map_length.getText();
                 String h = map_height.getText();
+                //input CHECK
                 if(l.length() != 0 && h.length() != 0){
                     int len = Integer.parseInt(l);
                     int hei = Integer.parseInt(h);
@@ -162,14 +146,16 @@ public class MapSettings extends JFrame {
             
             int return_value = file_chooser.showOpenDialog(null);
             if (return_value == JFileChooser.APPROVE_OPTION) {
-                
+          
+                //no need to check due to return_value check
                 selected_folder = file_chooser.getSelectedFile();
                 System.out.println("Selected folder: " + selected_folder);
                 
-                //get finalized map
+                //NO NEED TO CHECK CAUSE WE DON'T LOAD ANYTHING
+                //get finalized map from grid
                 map_data = panel.get_map_data();
 
-                //get map_name from textfield
+                //get map_name from map name textfield
                 String map_name = map_name_input.getText();
 
                 //Zip output to selected directory
@@ -185,6 +171,7 @@ public class MapSettings extends JFrame {
                 ZipOutputStream zos = new ZipOutputStream(fos);
 
                 // Create a temporary file to store the integer
+                //NO NEED TO CHECK
                 try {
                     File temp_file = new File("temp.txt");
                     FileWriter writer = new FileWriter(temp_file);
@@ -220,6 +207,7 @@ public class MapSettings extends JFrame {
                 tile_data = panel.get_tile_cards();
 
                 //ZipEntry for tiles
+                //NO NEED TO CHECK CAUSE ARRAYLIST
                 for(TileData t : tile_data){
                     try {
                         zos.putNextEntry(new ZipEntry(t.tile.name + ".png"));
@@ -236,7 +224,12 @@ public class MapSettings extends JFrame {
                     FileWriter writer = new FileWriter(temp_file);
 
                     for(TileData t: tile_data){
-                        writer.write(t.tile.index + "\n");
+                        //write tile index | solid |
+                        writer.write(t.tile.index + " ");
+                        if(t.solid_state.isSelected()){
+                            writer.write("1");
+                        }else writer.write("0");
+                        writer.write(" \n");
                     }
                     writer.close();
 
@@ -269,70 +262,81 @@ public class MapSettings extends JFrame {
         //lambdaed, handle loading
         load_listener = (ActionEvent e) -> {
 
-            //clear previous tile list
-            loaded_tile_data.clear();
-
             file_chooser = new JFileChooser();
             file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             
             int return_value = file_chooser.showOpenDialog(null);
             if (return_value == JFileChooser.APPROVE_OPTION) {
+                
                 selected_zip = file_chooser.getSelectedFile();
                 System.out.println("Selected zip: " + selected_zip);
 
-                // Create a ZipFile object
-                ZipFile zip_file;
-                try {
+                if(selected_zip != null){
+                    //clear previous tile list
+                    loaded_tile_data.clear();
+                    // Create a ZipFile object
+                    ZipFile zip_file;
+                    try {
 
-                    zip_file = new ZipFile(selected_zip.getAbsolutePath());
+                        zip_file = new ZipFile(selected_zip.getAbsolutePath());
 
-                    // Get an enumeration of the entries in the zip file
-                    Enumeration<? extends ZipEntry> entries = zip_file.entries();
+                        // Get an enumeration of the entries in the zip file
+                        Enumeration<? extends ZipEntry> entries = zip_file.entries();
 
-                    // Iterate over the entries and print their names
-                    System.out.println("Zip contents: ");
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        //System.out.println(entry.getName());
+                        // Iterate over the entries and print their names
+                        System.out.println("Zip contents: ");
+                        while (entries.hasMoreElements()) {
+                            ZipEntry entry = entries.nextElement();
+                            //System.out.println(entry.getName());
 
-                        //read operations:
-                        if(entry.getName().endsWith("data.txt")){
-                            read_tile_data(zip_file, entry);
+                            //read operations:
+                            if(entry.getName().endsWith("data.txt")){
+                                read_tile_data(zip_file, entry);
+                            }
+                            if(entry.getName().endsWith("$.txt")){
+                                //set map name textfield to display map file name
+                                String map_name = entry.getName();
+                                int map_name_len = map_name.length() - 5; // $.txt = 5
+                                map_name = map_name.substring(0, map_name_len);
+
+                                map_name_input.setText(map_name);
+                                read_map(zip_file, entry);
+                            }
                         }
-                        if(entry.getName().endsWith("$.txt")){
-                            read_map(zip_file, entry);
+
+                        //load for pngs
+                        entries = zip_file.entries();
+                        while (entries.hasMoreElements()) {
+                            ZipEntry entry = entries.nextElement();
+                            //System.out.println(entry.getName());
+
+                            if(entry.getName().endsWith(".png")){
+                                read_images(zip_file, entry);
+                            }
                         }
-                    }
 
-                    //load for pngs
-                    entries = zip_file.entries();
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        //System.out.println(entry.getName());
+                        //reset traversing index
+                        curr_idx = 0;
 
-                        if(entry.getName().endsWith(".png")){
-                            read_images(zip_file, entry);
+                        //Check print
+                        System.out.println(loaded_tile_data.size());
+                        for(TileData t : loaded_tile_data){
+                            System.out.println(
+                                t.tile.name + " " + t.tile.index + " " 
+                                + t.tile.is_solid + " " + t.input.getText());
                         }
-                    }
 
-                    //reset traversing index
-                    curr_idx = 0;
-
-                    //Check print
-                    System.out.println(loaded_tile_data.size());
-                    for(TileData t : loaded_tile_data){
-                        System.out.println(t.tile.name + " " + t.tile.index + " " + t.input.getText());
-                    }
-
-                    zip_file.close();
+                        zip_file.close();
 
                     } catch (IOException ex) {
                     }
-                }
 
-            //load the map to the grid
-            panel.display_loaded_map_tiles(loaded_map_indexes, loaded_tile_data);
-            tile_list.load_map(loaded_tile_data);
+                    //load the map to the grid
+                    panel.display_loaded_map_tiles(loaded_map_indexes, loaded_tile_data);
+                    tile_list.load_map(loaded_tile_data);
+
+                }else System.out.println("Canceled loading...");
+            }
     
         };
 
@@ -358,8 +362,12 @@ public class MapSettings extends JFrame {
 
             loaded_tile_data.add(
                 new TileData(
-                    new Tile(tile_data_indexes[curr_idx][0], tile_name, tile_image), 
-                    new JTextField(tile_data_indexes[curr_idx][0])
+                    new Tile(
+                        tile_data_indexes[curr_idx][0], 
+                        (tile_data_indexes[curr_idx][1] == 1),
+                        tile_name, tile_image), 
+                    new JTextField(tile_data_indexes[curr_idx][0]),
+                    new JCheckBox("", (tile_data_indexes[curr_idx][1] == 1)) 
                 )
             );
 
@@ -380,7 +388,7 @@ public class MapSettings extends JFrame {
 
             String line = reader.readLine();
             int td_h = 0;
-            int td_l = 1; //constant 1 cause only indexes for now, no solid data and others
+            int td_l = line.length() / 2;
 
             do{
                 td_h++;
