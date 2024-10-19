@@ -10,17 +10,17 @@ import javax.swing.*;
 public class MapSettings extends JFrame {
 
     private final Panel panel;
-    private final JLabel length, height, header, map_name_label, load_map;
+    private final JLabel length, height, header, map_name_label, load_map, add_tiles;
     private final JTextArea note;
     private final JTextField map_length, map_height, map_name_input;
-    private final JButton resize_btn, save_btn;
-    private final JPanel panel1, panel2, panel3;
+    private final JButton resize_btn, save_btn, add_tiles_btn;
+    private final JPanel panel1, panel2, panel3, panel4;
     private JFileChooser file_chooser = null;
     private final ActionListener resize_listener, save_listener, load_listener;
     private Tile[][] map_data;
     private int[][] loaded_map_indexes, tile_data_indexes;
     private ArrayList<TileData> tile_data, loaded_tile_data;
-    private TileList tile_list = null;
+    private TileList tile_list;
     private int curr_idx = 0;
     public File selected_folder, selected_zip;
     public final JButton load_btn;
@@ -36,7 +36,8 @@ public class MapSettings extends JFrame {
         length = new JLabel("Map Length (in Tiles)");
         height = new JLabel("Map Height (in Tiles)");
         map_name_label = new JLabel("v Enter map name v");
-        load_map = new JLabel("> Load Map >");
+        load_map = new JLabel("Load/Save Map");
+        add_tiles = new JLabel("Add Tiles");
         header = new JLabel("v Enter map dimenstions v - Max n tiles: 500");
         note = new JTextArea("""
             Note that upon clicking resize,  it will overwrite the current map data. 
@@ -47,6 +48,7 @@ public class MapSettings extends JFrame {
         height.setForeground(Color.WHITE);
         map_name_label.setForeground(Color.WHITE);
         load_map.setForeground(Color.WHITE);
+        add_tiles.setForeground(Color.WHITE);
         header.setForeground(Color.WHITE);
         note.setForeground(Color.WHITE);
         note.setBackground(Color.BLACK);
@@ -58,6 +60,7 @@ public class MapSettings extends JFrame {
         resize_btn = new JButton("Resize");
         save_btn = new JButton("Save");
         load_btn = new JButton("Load");
+        add_tiles_btn = new JButton("Select...");
 
         resize_btn.setBackground(Color.BLACK);
         resize_btn.setForeground(Color.WHITE);
@@ -65,6 +68,8 @@ public class MapSettings extends JFrame {
         save_btn.setForeground(Color.WHITE);
         load_btn.setBackground(Color.BLACK);
         load_btn.setForeground(Color.WHITE);
+        add_tiles_btn.setBackground(Color.BLACK);
+        add_tiles_btn.setForeground(Color.WHITE);
 
         map_length.setFont(new Font("Consolas", Font.PLAIN, 25));
         map_height.setFont(new Font("Consolas", Font.PLAIN, 25));
@@ -92,6 +97,9 @@ public class MapSettings extends JFrame {
         panel3 = new JPanel();
         panel3.setLayout(new GridLayout(1, 1, 10, 5));
         panel3.setBackground(Color.BLACK);
+        panel4 = new JPanel();
+        panel4.setLayout(new GridLayout(1, 1, 10, 5));
+        panel4.setBackground(Color.BLACK);
 
         setLayout(new FlowLayout());
         //end
@@ -108,10 +116,17 @@ public class MapSettings extends JFrame {
         panel2.add(map_name_label);
         panel2.add(map_name_input);
         add(panel2);
-        add(save_btn);
+        
         panel3.add(load_map);
         panel3.add(load_btn);
         add(panel3);
+        add(save_btn);
+
+        //add_tiles_btn.addActionListener(tile_list.click_listener);
+
+        //panel4.add(add_tiles);
+        //panel4.add(add_tiles_btn);
+        //add(panel4);
         //end
 
         //window settings
