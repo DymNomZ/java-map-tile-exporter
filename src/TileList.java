@@ -50,7 +50,7 @@ public class TileList extends JFrame {
                 char c = e.getKeyChar();
                 //System.out.println(idx_input.getText().length() + " outside");
                 // Ignore non-digit characters
-                if (!Character.isDigit(c) || c == '0') {
+                if (!Character.isDigit(c)) {
                     //System.out.println(idx_input.getText().length() + " inside");
                     e.consume();
                 }
@@ -236,6 +236,7 @@ public class TileList extends JFrame {
 
                     //only 2 digits maluoy ta
                     idx_input = new JTextField(2);
+                    idx_input.setText("0");
                     idx_input.addKeyListener(char_consumer);
 
                     solid_label = new JLabel("solid");

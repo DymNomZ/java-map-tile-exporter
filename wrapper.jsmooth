@@ -8,10 +8,10 @@
 <JVMSearchPath>jview</JVMSearchPath>
 <arguments></arguments>
 <embeddedJar>true</embeddedJar>
-<executableName>j2dc-map-editor.exe</executableName>
-<iconLocation>..\Pictures\DymNominator Gaming Profile Pictures\D.jpg</iconLocation>
+<executableName>..\j2dc-map-editor.exe</executableName>
+<iconLocation>..\..\Pictures\DymNominator Gaming Profile Pictures\D.jpg</iconLocation>
 <initialMemoryHeap>-1</initialMemoryHeap>
-<jarLocation>j2dc-map-editor\j2dc-map-editor.jar</jarLocation>
+<jarLocation>j2dc-map-editor.jar</jarLocation>
 <mainClassName>Main</mainClassName>
 <maximumMemoryHeap>-1</maximumMemoryHeap>
 <maximumVersion></maximumVersion>

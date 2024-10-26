@@ -27,6 +27,7 @@ public class Panel extends JPanel {
 
     //hold data of loaded tiles on tile list
     private ArrayList<TileData> loaded_tile_data = new ArrayList<>();
+    private ArrayList<TileData> final_tile_data = new ArrayList<>();
     private int loaded_tile_data_idx = 0;
     private boolean loaded_tile_solid_state = false;
 
@@ -128,16 +129,22 @@ public class Panel extends JPanel {
 
                     //ensure inputted index in textfield will be applied
                     //if tile exists on the grid
-                    if(t.tile == map_tiles[i][j] && loaded_tile_data_idx != map_tiles[i][j].index){
-                        map_tiles[i][j].index = loaded_tile_data_idx;
+                    if(t.tile == map_tiles[i][j]){
+                        if(loaded_tile_data_idx != map_tiles[i][j].index){
+                            map_tiles[i][j].index = loaded_tile_data_idx;
+                        }
+
+                        if(loaded_tile_solid_state != map_tiles[i][j].is_solid){
+                            map_tiles[i][j].is_solid = loaded_tile_solid_state;
+                        }
+                        System.out.println(t.tile.name);
+                        if(!(final_tile_data.contains(t))) final_tile_data.add(t);
+                        System.out.println("size: " + final_tile_data.size());
                     }
-                    //if not update tile index still
+                    //if not update tile still
                     else {
                         t.tile.index = loaded_tile_data_idx;
-                    }
-
-                    if(t.tile == map_tiles[i][j] && loaded_tile_solid_state != map_tiles[i][j].is_solid){
-                        map_tiles[i][j].is_solid = loaded_tile_solid_state;
+                        t.tile.is_solid = loaded_tile_solid_state;
                     }
                 }
             }
@@ -151,7 +158,7 @@ public class Panel extends JPanel {
     }
 
     public ArrayList<TileData> get_tile_cards(){
-        return loaded_tile_data;
+        return final_tile_data;
     }
 
     private final ActionListener timer_listener = new ActionListener() {
