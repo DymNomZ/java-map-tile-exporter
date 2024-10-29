@@ -18,14 +18,14 @@ public class TileList extends JFrame {
     private String texture_name = " ";
     private int dot_idx = -1;
     private final Panel panel;
-    private final MapSettings settings;
+    private final Sidebar settings;
     private final KeyAdapter char_consumer;
     public File selected_folder;
     public File[] files;
     public ArrayList<JPanel> cards = new ArrayList<>();
     public ArrayList<TileData> check_tile_data, loaded_tile_data;
     
-    public TileList(Panel panel, MapSettings settings){
+    public TileList(Panel panel, Sidebar settings){
 
         this.panel = panel;
         this.settings = settings;

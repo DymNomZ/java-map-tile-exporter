@@ -5,19 +5,15 @@ public class Main {
 
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setTitle("Editor");
+        window.setTitle("j2dc Map Editor");
         window.setResizable(false);
 
         Panel panel = new Panel();
         window.add(panel);
         window.pack();
-        window.setLocation(325, 0);
+        window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        MapSettings settings = new MapSettings(panel);
-        TileList tile_list = new TileList(panel, settings);
-        settings.set_tile_list(tile_list);
-
-        panel.start_clock();
+        panel.startClock();
     }
 }

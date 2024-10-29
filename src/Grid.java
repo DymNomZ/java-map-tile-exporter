@@ -10,15 +10,15 @@ public class Grid {
     
     public Grid(int col, int row){
 
-        initialize_grid(col, row);
+        initializeGrid(col, row);
     }
 
-    public Tile[][] get_map_data(){
+    public Tile[][] getMapTiles(){
         return tiles;
     }
 
     //fill grid array with void tiles
-    public void initialize_grid(int col, int row){
+    public void initializeGrid(int col, int row){
         //System.out.println(col + " " + row);
         tiles = new Tile[row][col];
         for(int i = 0; i < row; i++){
@@ -28,7 +28,7 @@ public class Grid {
         }
     }
 
-    public void load_map_tiles(int[][] tile_indexes, ArrayList<TileData> tile_data){
+    public void loadMapTiles(int[][] tile_indexes, ArrayList<TileData> tile_data){
 
         map_length = tile_indexes[0].length;
         map_height = tile_indexes.length;
