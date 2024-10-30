@@ -1,4 +1,3 @@
-
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -13,19 +12,58 @@ public class Grid {
         initializeGrid(col, row);
     }
 
-    public Tile[][] getMapTiles(){
-        return tiles;
+    private Tile[][] prepareGrid(int col, int row){
+        Tile[][] temp = new Tile[row][col];
+        for(int i = 0; i < row; i++){
+            for(int j = 0; j < col; j++){
+                temp[i][j] = new Tile("void.png", 0, "void", false);
+            }
+        }
+
+        return temp;
     }
 
     //fill grid array with void tiles
     public void initializeGrid(int col, int row){
-        //System.out.println(col + " " + row);
-        tiles = new Tile[row][col];
-        for(int i = 0; i < row; i++){
-            for(int j = 0; j < col; j++){
-                tiles[i][j] = new Tile("void.png", 0, "void", false);
+        tiles = prepareGrid(col, row);
+
+        map_length = col;
+        map_height = row;
+    }
+
+    //resize grid
+    public void resize(int new_col, int new_row){
+
+        //Do not perform if new values for col and row are jsut the same to save overhead
+        if(new_col != map_length || new_row != map_height){
+
+            int base_col = map_length;
+            int base_row = map_height;
+
+            //copy previous map to new map array;
+            //if a value is bigger, base off the old array
+            //else base off new map size
+            if(new_col > map_length) base_col = tiles[0].length;
+            else base_col = new_col;
+
+            if(new_row > map_height) base_row = tiles.length;
+            else base_row = new_row;
+
+            Tile[][] new_map = prepareGrid(new_col, new_row);
+
+            for(int i = 0; i < base_row; i++){
+                System.arraycopy(tiles[i], 0, new_map[i], 0, base_col);
             }
+
+            //replace with new sizes
+            map_length = new_col;
+            map_height = new_row;
+
+            //replace tiles with new array
+            tiles = new_map;
+
         }
+
     }
 
     public void loadMapTiles(int[][] tile_indexes, ArrayList<TileData> tile_data){
@@ -53,15 +91,55 @@ public class Grid {
         }
     }
 
+    //finalize tiles to to ensure all data is correct
+    public Tile[][] finalizedTiles(){
+        
+        int loaded_tile_data_idx = 0;
+        boolean loaded_tile_solid_state = false;
+        
+        ArrayList<TileData> loaded_tile_data = null, final_tile_data = null;
+
+        for(TileData t : loaded_tile_data){
+            for(int i = 0; i < tiles.length; i++){
+                for(int j = 0; j < tiles[i].length; j++){
+
+                    if(t.input.getText().length() != 0){
+                        loaded_tile_data_idx = Integer.parseInt(t.input.getText());
+                    }
+
+                    loaded_tile_solid_state = t.solid_state.isSelected();
+
+                    //if tile exists on the grid
+                    if(t.tile == tiles[i][j]){
+                        if(loaded_tile_data_idx != tiles[i][j].index){
+                            tiles[i][j].index = loaded_tile_data_idx;
+                        }
+
+                        if(loaded_tile_solid_state != tiles[i][j].is_solid){
+                            tiles[i][j].is_solid = loaded_tile_solid_state;
+                        }
+                        System.out.println(t.tile.name);
+                        if(!(final_tile_data.contains(t))) final_tile_data.add(t);
+                        System.out.println("size: " + final_tile_data.size());
+                    }
+                    //if not update tile still
+                    else {
+                        t.tile.index = loaded_tile_data_idx;
+                        t.tile.is_solid = loaded_tile_solid_state;
+                    }
+                }
+            }
+        }
+
+        return tiles;
+    }
+
     void display(
         Graphics G, Camera cam, 
         int scale, int def_tile_size,
-        int max_map_col, int max_map_row,
         Tile tile, MouseHandler mouse
     ){
 
-        map_length = max_map_col;
-        map_height = max_map_row;
         tile_size = scale * def_tile_size;
 
         int grid_row = 0, grid_col = 0;

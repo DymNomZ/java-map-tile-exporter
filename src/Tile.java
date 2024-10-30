@@ -31,8 +31,9 @@ public class Tile {
             }
             else image = ImageIO.read(new File(path));
         } catch (IOException e) {
-            //System.out.println("Error loading tile image");
+            System.out.println("Error loading tile image");
         }
+        
         this.index = index;
         this.name = name;
         this.is_solid = is_solid;

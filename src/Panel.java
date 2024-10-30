@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -12,28 +11,26 @@ import javax.swing.Timer;
 
 public class Panel extends JPanel {
     
-    public final int SCREEN_WIDTH = 1300;
+    public final int SCREEN_WIDTH = 1500;
     public final int SCREEN_HEIGHT = 800;
     public final int DEF_TILE_SIZE = 14;
+    public final int DEF_TILE_COL = 25, DEF_TILE_ROW = 25;
 
     public int scale = 1;
     public int tile_size = DEF_TILE_SIZE * scale;
-    public int max_map_col = 25, max_map_row = 25;
 
     private Tile tile = null;
     private Tile blank = null;
-    
-    //hold data of loaded tiles on tile list
-    private ArrayList<TileData> loaded_tile_data = new ArrayList<>();
-    private ArrayList<TileData> final_tile_data = new ArrayList<>();
 
-    private Camera cam;
-    private final Grid grid;
-    private DataHandler data_handler;
     private MouseHandler mouse;
-    private TileHandler tile_handler;
+    private Cursor cursor;
+    private final DataHandler data_handler;
+
+    public Camera cam;
+    public final Grid grid;
     
-    Sidebar sidebar;
+    public Settings settings;
+    public TileList tile_list;
     
     public Panel(){
 
@@ -42,17 +39,17 @@ public class Panel extends JPanel {
         this.setFocusable(true);
         this.setLayout(new BorderLayout());
 
-        cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, max_map_col, max_map_row);
-        grid =  new Grid(max_map_col, max_map_row);
-        data_handler = new DataHandler(this, grid);
+        cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, DEF_TILE_COL, DEF_TILE_ROW);
+        grid =  new Grid(DEF_TILE_COL, DEF_TILE_ROW);
         mouse = new MouseHandler(SCREEN_WIDTH, SCREEN_HEIGHT);
-        tile_handler = new TileHandler(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, max_map_col, max_map_row);
+        cursor = new Cursor(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, DEF_TILE_COL, DEF_TILE_ROW);
 
-        sidebar = new Sidebar(this, grid);
-        //TileList tile_list = new TileList(this, settings);
-        //settings.set_tile_list(tile_list);
+        data_handler = new DataHandler(this);
+        settings = new Settings(data_handler);
+        tile_list = new TileList(data_handler);
 
-        this.add(sidebar, BorderLayout.WEST);
+        this.add(settings, BorderLayout.WEST);
+        this.add(tile_list, BorderLayout.EAST);
 
         tile = new Tile("void.png", 0, "void", false);
         blank = new Tile("void.png", 0, "void", false);
@@ -62,25 +59,9 @@ public class Panel extends JPanel {
         this.addMouseWheelListener(mouse);
     }
 
-    public void clear_tile_data(){
-        loaded_tile_data.clear();
-    }
-
     public void add_tile_data(Tile tile, JTextField input, JCheckBox solid_state){
         //add tiles and data from tile list
-        loaded_tile_data.add(new TileData(tile, input, solid_state));
-    }
-
-    public void set_dimensions(int col, int row){
-        //update because of new map dimensions
-        max_map_col = col;
-        max_map_row = row;
-
-        //adjust cam position to new map dimensions
-        cam.resize_adjust(
-            (max_map_col * tile_size) / 2, 
-            (max_map_row * tile_size) / 2
-        );
+        //loaded_tile_data.add(new TileData(tile, input, solid_state));
     }
 
     public void updateGrid(int col, int row){
@@ -101,16 +82,12 @@ public class Panel extends JPanel {
         }
     }
 
-    public ArrayList<TileData> get_tile_cards(){
-        return final_tile_data;
-    }
-
     private final ActionListener timer_listener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e){
 
-            cam.update_position(mouse, scale, DEF_TILE_SIZE);
-            tile_handler.update_position(mouse, scale, DEF_TILE_SIZE);
+            cam.updatePosition(mouse, scale, DEF_TILE_SIZE);
+            cursor.updatePosition(mouse, scale, DEF_TILE_SIZE);
 
             //dictate how much scale will change when mouse wheel is scrolled
             scale = mouse.get_scale_factor();
@@ -128,10 +105,8 @@ public class Panel extends JPanel {
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        grid.display(g, cam, scale, DEF_TILE_SIZE, 
-            max_map_col, max_map_row, tile, mouse
-        );
-        tile_handler.display_tile(g, tile);
+        grid.display(g, cam, scale, DEF_TILE_SIZE, tile, mouse);
+        cursor.displayTile(g, tile);
     }
 
 }

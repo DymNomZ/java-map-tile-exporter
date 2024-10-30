@@ -15,11 +15,9 @@ public class DataHandler {
     ArrayList<TileData> loaded_tile_data, final_tile_data;
 
     Panel panel;
-    Grid grid;
     
-    public DataHandler(Panel panel, Grid grid){
+    public DataHandler(Panel panel){
         this.panel = panel;
-        this.grid = grid;
 
         loaded_tile_data = new ArrayList<>();
         final_tile_data = new ArrayList<>();
@@ -27,62 +25,6 @@ public class DataHandler {
 
     public ArrayList<TileData> getFinalizedTileData(){
         return final_tile_data;
-    }
-
-    //finalize tiles to to ensure all data is correct
-    public Tile[][] finalizedTiles(){
-        
-        int loaded_tile_data_idx = 0;
-        boolean loaded_tile_solid_state = false;
-
-        //Gets the tiles from the grid
-        Tile[][] map_tiles = grid.getMapTiles();
-
-        for(TileData t : loaded_tile_data){
-            for(int i = 0; i < map_tiles.length; i++){
-                for(int j = 0; j < map_tiles[i].length; j++){
-
-                    if(t.input.getText().length() != 0){
-                        loaded_tile_data_idx = Integer.parseInt(t.input.getText());
-                    }
-
-                    loaded_tile_solid_state = t.solid_state.isSelected();
-
-                    //if tile exists on the grid
-                    if(t.tile == map_tiles[i][j]){
-                        if(loaded_tile_data_idx != map_tiles[i][j].index){
-                            map_tiles[i][j].index = loaded_tile_data_idx;
-                        }
-
-                        if(loaded_tile_solid_state != map_tiles[i][j].is_solid){
-                            map_tiles[i][j].is_solid = loaded_tile_solid_state;
-                        }
-                        System.out.println(t.tile.name);
-                        if(!(final_tile_data.contains(t))) final_tile_data.add(t);
-                        System.out.println("size: " + final_tile_data.size());
-                    }
-                    //if not update tile still
-                    else {
-                        t.tile.index = loaded_tile_data_idx;
-                        t.tile.is_solid = loaded_tile_solid_state;
-                    }
-                }
-            }
-        }
-
-        return map_tiles;
-    }
-
-    public void buildLoadedMap(int[][] map_indexes, ArrayList<TileData> tile_data){
-
-        //clear contents previously used for reading images
-        //this.loaded_tile_data.clear();
-        //this.loaded_tile_data.addAll(tile_data);
-
-        //update dimensions
-        panel.set_dimensions(map_indexes[0].length, map_indexes.length);
-
-        grid.loadMapTiles(map_indexes, loaded_tile_data);
     }
 
     public ArrayList<TileData> readImages(ZipFile zip, ZipEntry image, int[][] tile_data_indexes){
@@ -135,11 +77,8 @@ public class DataHandler {
             do{
                 td_h++;
             }while ((reader.readLine()) != null);
-            //System.out.println("Tile Data Length: " + td_l + " Height: " + td_h);
             reader.close();
 
-            //new tile_data cause previous inputs were already consumed by reader
-            //new reader cause the previous one is at the end of the file = null
             tile_data_stream = zip.getInputStream(tile_data);
             reader = new BufferedReader(new InputStreamReader(tile_data_stream));
 
@@ -150,7 +89,6 @@ public class DataHandler {
                 String[] raw_indexes = reader.readLine().split(" ");
 
                 for(int j = 0; j < td_l; j++) {
-                    //System.out.println(raw_indexes[j]);
                     tile_data_indexes[i][j] = Integer.parseInt(raw_indexes[j]);
                 }
 
@@ -160,7 +98,7 @@ public class DataHandler {
             tile_data_stream.close();
 
         } catch (IOException ex) {
-            System.out.println("Error reading tile data");
+            System.out.println("Error reading tile data file");
         }
 
         return tile_data_indexes;
@@ -185,8 +123,6 @@ public class DataHandler {
             }while ((reader.readLine()) != null);
             reader.close();
 
-            //new map cause previous inputs were already consumed by reader
-            //new reader cause the previous one is at the end of the file = null
             map_data_stream = zip.getInputStream(map);
             reader = new BufferedReader(new InputStreamReader(map_data_stream));
 
@@ -211,4 +147,204 @@ public class DataHandler {
         
         return loaded_map_indexes;
     }
+
+    public void load_map(ArrayList<TileData> loaded_tile_data){
+
+        this.loaded_tile_data = loaded_tile_data;
+
+        //refresh_list(true);
+    }
+
+//     public void refresh_list(boolean is_editing){
+
+//         System.out.println("Refreshing");
+//         if(!is_editing){
+//             files = selected_folder.listFiles();
+//             load_cards();
+//         }else{
+//             //clear cards to load tiles of loaded map
+//             //panel.clear_tile_data();
+//             cards.clear();
+//             main_panel.removeAll();
+//             main_panel.add(add_btn);
+//             loaded_map_cards();
+//         }
+            
+//     }
+
+//     //prevent adding existing tiles
+//     public boolean check_duplicates(String check_name){
+
+//         check_tile_data = panel.get_tile_cards();
+
+//         //retrun cause tile data is still empty
+//         if(check_tile_data.isEmpty()){
+//             System.out.println("Empty");
+//             return false;
+//         }
+
+//         for(TileData td : check_tile_data){
+//             if(td.tile.name.equals(check_name)) return true;
+//         }
+
+//         return false;
+//     }
+
+//     public void loaded_map_cards(){
+
+//         for(TileData td : loaded_tile_data){
+
+//             new_panel = new JPanel();
+//             new_panel.setBackground(Color.BLACK);
+//             new_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 10));
+
+//             tile_image = new JLabel(new ImageIcon(td.tile.image));
+//             tile_name = new JLabel(td.tile.name);
+//             tile_name.setForeground(Color.WHITE);
+
+//             idx_label = new JLabel("idx");
+//             idx_label.setForeground(Color.WHITE);
+
+//             idx_input = td.input;
+            
+//             if(td.tile.index != 0){
+//                 idx_input.setText(Integer.toString(td.tile.index));
+//             }else{
+//                 idx_input.setText("0");
+//             }
+            
+//             idx_input.addKeyListener(char_consumer);
+
+//             solid_label = new JLabel("solid");
+//             solid_label.setForeground(Color.WHITE);
+
+//             solid_check = td.solid_state;
+//             solid_check.setBackground(Color.BLACK);
+
+//             //lamdaed again, handle checking
+//             // solid_check.addItemListener((ItemEvent e) -> {
+//             //     if (e.getStateChange() == ItemEvent.SELECTED) {
+//             //         System.out.println("Tile is solid");
+                    
+//             //     } else {
+//             //         System.out.println("Tile is not solid");
+//             //     }
+//             // });
+
+//             new_panel.add(tile_image);
+//             new_panel.add(tile_name);
+
+//             mini_grid = new JPanel();
+//             mini_grid.setBackground(Color.BLACK);
+//             mini_grid.setLayout(new GridLayout(2, 2));
+//             mini_grid.add(idx_label);
+//             mini_grid.add(solid_label);
+//             mini_grid.add(idx_input);
+//             mini_grid.add(solid_check);
+
+//             new_panel.add(mini_grid);
+
+//             //Handles what tile is selecting for placing on grid
+//             new_panel.addMouseListener(
+//                 new CardHandler(
+//                     panel, td.tile,
+//                     idx_input
+//                 )
+//             );
+
+//             //add to tile data array in panel for finalizing purposes
+//             //panel.add_tile_data(td.tile, idx_input);
+//             cards.add(new_panel);
+
+//             //display selection of tiles on window
+//             main_panel.add(new_panel);
+//         }
+
+//         revalidate();
+// }
+
+//     public void load_cards(){
+
+//         if (files != null) {
+//             for (File file : files) {
+
+//                 dot_idx = file.getName().lastIndexOf('.');
+//                 texture_name = file.getName().substring(0, dot_idx);
+
+//                 if(file.getName().endsWith(".png") && !check_duplicates(texture_name)){
+
+//                     //System.out.println(file.getName());
+
+//                     new_panel = new JPanel();
+//                     new_panel.setBackground(Color.BLACK);
+//                     new_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 10));
+
+//                     //create tile
+//                     tile = new Tile(file.getAbsolutePath(), 0, texture_name, false);
+
+//                     tile_image = new JLabel(new ImageIcon(tile.image));
+//                     tile_name = new JLabel(texture_name);
+//                     tile_name.setForeground(Color.WHITE);
+
+//                     idx_label = new JLabel("idx");
+//                     idx_label.setForeground(Color.WHITE);
+
+//                     //only 2 digits maluoy ta
+//                     idx_input = new JTextField(2);
+//                     idx_input.setText("0");
+//                     idx_input.addKeyListener(char_consumer);
+
+//                     solid_label = new JLabel("solid");
+//                     solid_label.setForeground(Color.WHITE);
+
+//                     solid_check = new JCheckBox();
+//                     solid_check.setBackground(Color.BLACK);
+
+//                     //lamdaed again, handle checking
+//                     solid_check.addItemListener((ItemEvent e) -> {
+//                         if (e.getStateChange() == ItemEvent.SELECTED) {
+//                             System.out.println("Tile is solid");
+//                             tile.is_solid = true;
+//                         } else {
+//                             System.out.println("Tile is not solid");
+//                             tile.is_solid = false;
+//                         }
+//                     });
+
+//                     new_panel.add(tile_image);
+//                     new_panel.add(tile_name);
+
+//                     mini_grid = new JPanel();
+//                     mini_grid.setBackground(Color.BLACK);
+//                     mini_grid.setLayout(new GridLayout(2, 2));
+//                     mini_grid.add(idx_label);
+//                     mini_grid.add(solid_label);
+//                     mini_grid.add(idx_input);
+//                     mini_grid.add(solid_check);
+
+//                     new_panel.add(mini_grid);
+
+//                     //Handles what tile is selecting for placing on grid
+//                     new_panel.addMouseListener(
+//                         new CardHandler(
+//                             panel, tile,
+//                             idx_input
+//                         )
+//                     );
+
+//                     //add to tile data ArrayList in panel for finalizing purposes
+//                     panel.add_tile_data(tile, idx_input, solid_check);
+//                     cards.add(new_panel);
+//                     //display selection of tiles on window
+//                     main_panel.add(new_panel);
+//                 }
+//             }
+
+//             revalidate();
+
+//         } else {
+//             System.out.println("Cannot initialize, directory is empty");
+//         }
+
+    // }
 }

@@ -3,14 +3,14 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class TileHandler {
+public class Cursor {
 
     private BufferedImage blank = null;
     private int tile_size, scale, prev_x, prev_y;
     public int x_pos, y_pos, screen_x = 0, screen_y = 0;
     public int map_length, map_height;
     
-    public TileHandler(
+    public Cursor(
         int SCREEN_WIDTH, int SCREEN_HEIGHT, 
         int tile_size, int scale, 
         int map_length, int map_height
@@ -32,11 +32,10 @@ public class TileHandler {
         }
     }
 
-    public void update_position(MouseHandler mouse, int new_scale, int def_tile_size){
+    public void updatePosition(MouseHandler mouse, int new_scale, int def_tile_size){
 
         screen_x = mouse.tile_x;
         screen_y = mouse.tile_y;
-        //System.out.println(screen_x + " " + screen_y);
 
         int old_scale = scale;
         int old_tile_size = tile_size;
@@ -68,7 +67,7 @@ public class TileHandler {
         
     }
 
-    public void display_tile(
+    public void displayTile(
         Graphics G, 
         Tile tile
     ){

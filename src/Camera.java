@@ -1,6 +1,4 @@
 
-
-
 public class Camera {
     
     private int tile_size, scale, delta_x, delta_y, prev_x, prev_y;
@@ -25,7 +23,7 @@ public class Camera {
         screen_y = SCREEN_HEIGHT / 2;
     }
 
-    public void resize_adjust(int new_x, int new_y){
+    public void adjustPosition(int new_x, int new_y){
         //change coords to match with new map dimensions
         x_pos = new_x;
         y_pos = new_y;
@@ -33,14 +31,12 @@ public class Camera {
         prev_y = y_pos;
     }
 
-    public void update_position(MouseHandler mouse, int new_scale, int def_tile_size){
+    public void updatePosition(MouseHandler mouse, int new_scale, int def_tile_size){
 
         int old_scale = scale;
         int old_tile_size = tile_size;
         tile_size = new_scale * def_tile_size;
         scale = new_scale;
-
-        //System.out.println(old_scale + " " + new_scale);
 
         //handle zooming
         if(tile_size != old_tile_size){
@@ -89,14 +85,7 @@ public class Camera {
             prev_x = x_pos;
             prev_y = y_pos;
         }
-        //System.out.println(x_pos + " " + y_pos + " " + prev_x + " " + prev_y);
         
     }
-
-    // void debug_display(Graphics G, int scale, int def_tile_size){
-
-    //     G.setColor(Color.green);
-    //     G.drawRect(screen_x, screen_y, tile_size, tile_size);
-    // }
 
 }

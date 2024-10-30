@@ -2,31 +2,27 @@ import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
-public class Sidebar extends JPanel {
+public class Settings extends JPanel {
 
     private final GridBagLayout gb_layout;
     private final GridBagConstraints gbc;
 
     public File selected_folder, selected_zip;
 
-    Panel panel;
-    Grid grid;
     DataHandler data_handler;
 
-    public Sidebar(Panel panel, Grid grid){
+    public Settings(DataHandler data_handler){
 
-        this.panel = panel;
-        this.grid = grid;
+        this.data_handler = data_handler;
 
-        data_handler = new DataHandler(panel, grid);
+        this.setPreferredSize(new Dimension(250, 800));
+        this.setBackground(Color.BLACK);
+        this.setFocusable(true);
 
         gb_layout = new GridBagLayout();
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 5,0, 5);
-
-        this.setPreferredSize(new Dimension(300, 300));
-        this.setBackground(Color.BLACK);
-        this.setFocusable(true);
+        
 
         GUI.Panels.MAP_SETTINGS.setLayout(gb_layout);
         GUI.Panels.MAP_SETTINGS.setBackground(Color.BLACK);
@@ -36,7 +32,7 @@ public class Sidebar extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 3;
-        GUI.Panels.MAP_SETTINGS.add(GUI.Labels.HEADER, gbc);
+        GUI.Panels.MAP_SETTINGS.add(GUI.Labels.MAP_SETTINGS, gbc);
 
         gbc.gridy = 1;
         GUI.Panels.MAP_SETTINGS.add(GUI.Labels.MAP_DIMENSIONS, gbc);
@@ -66,15 +62,20 @@ public class Sidebar extends JPanel {
         gbc.gridx = 1;
         GUI.Panels.MAP_SETTINGS.add(GUI.Buttons.SAVE, gbc);
 
+        gbc.gridx = 2;
+        GUI.Panels.MAP_SETTINGS.add(GUI.Buttons.NEW, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 3;
+        GUI.Panels.MAP_SETTINGS.add(GUI.Labels.TILE_SETTINGS, gbc);
+
         add(GUI.Panels.MAP_SETTINGS);
 
-        GUI.Buttons.RESIZE.addActionListener(new SidebarListeners.Resizer(panel));
-        GUI.Buttons.SAVE.addActionListener(new SidebarListeners.Saver(panel, data_handler));
-        GUI.Buttons.LOAD.addActionListener(new SidebarListeners.Loader(panel, data_handler));
-    }
-
-    public void set_tile_list(TileList tile_list){
-        //this.tile_list = tile_list;
+        GUI.Buttons.RESIZE.addActionListener(new Resizer(data_handler));
+        GUI.Buttons.SAVE.addActionListener(new Saver(data_handler));
+        GUI.Buttons.LOAD.addActionListener(new Loader(data_handler));
+        GUI.Buttons.NEW.addActionListener(new NewListener(data_handler));
     }
     
 }
