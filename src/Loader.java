@@ -89,7 +89,7 @@ public class Loader implements ActionListener {
                 //build loaded map on grid via data handler
                 data_handler.panel.grid.loadMapTiles(loaded_map_indexes, loaded_tile_data);
                 //load tiles for tile list
-                data_handler.panel.tile_list.loadTiles(loaded_tile_data);
+                //data_handler.panel.tile_list.loadTiles(loaded_tile_data);
 
             }else System.out.println("Canceled loading...");
         }

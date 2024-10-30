@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
@@ -26,7 +27,7 @@ public class Cursor {
 
         //default is void
         try {
-            blank = ImageIO.read(getClass().getResourceAsStream("void.png"));
+            blank = ImageIO.read(new ByteArrayInputStream(Tile.void_image));
         } catch (IOException e) {
             System.out.println("Error loading void tile");
         }

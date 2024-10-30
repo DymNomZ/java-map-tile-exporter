@@ -172,24 +172,6 @@ public class DataHandler {
             
 //     }
 
-//     //prevent adding existing tiles
-//     public boolean check_duplicates(String check_name){
-
-//         check_tile_data = panel.get_tile_cards();
-
-//         //retrun cause tile data is still empty
-//         if(check_tile_data.isEmpty()){
-//             System.out.println("Empty");
-//             return false;
-//         }
-
-//         for(TileData td : check_tile_data){
-//             if(td.tile.name.equals(check_name)) return true;
-//         }
-
-//         return false;
-//     }
-
 //     public void loaded_map_cards(){
 
 //         for(TileData td : loaded_tile_data){
@@ -263,88 +245,5 @@ public class DataHandler {
 //         revalidate();
 // }
 
-//     public void load_cards(){
 
-//         if (files != null) {
-//             for (File file : files) {
-
-//                 dot_idx = file.getName().lastIndexOf('.');
-//                 texture_name = file.getName().substring(0, dot_idx);
-
-//                 if(file.getName().endsWith(".png") && !check_duplicates(texture_name)){
-
-//                     //System.out.println(file.getName());
-
-//                     new_panel = new JPanel();
-//                     new_panel.setBackground(Color.BLACK);
-//                     new_panel.setLayout(new FlowLayout(FlowLayout.LEFT, 30, 10));
-
-//                     //create tile
-//                     tile = new Tile(file.getAbsolutePath(), 0, texture_name, false);
-
-//                     tile_image = new JLabel(new ImageIcon(tile.image));
-//                     tile_name = new JLabel(texture_name);
-//                     tile_name.setForeground(Color.WHITE);
-
-//                     idx_label = new JLabel("idx");
-//                     idx_label.setForeground(Color.WHITE);
-
-//                     //only 2 digits maluoy ta
-//                     idx_input = new JTextField(2);
-//                     idx_input.setText("0");
-//                     idx_input.addKeyListener(char_consumer);
-
-//                     solid_label = new JLabel("solid");
-//                     solid_label.setForeground(Color.WHITE);
-
-//                     solid_check = new JCheckBox();
-//                     solid_check.setBackground(Color.BLACK);
-
-//                     //lamdaed again, handle checking
-//                     solid_check.addItemListener((ItemEvent e) -> {
-//                         if (e.getStateChange() == ItemEvent.SELECTED) {
-//                             System.out.println("Tile is solid");
-//                             tile.is_solid = true;
-//                         } else {
-//                             System.out.println("Tile is not solid");
-//                             tile.is_solid = false;
-//                         }
-//                     });
-
-//                     new_panel.add(tile_image);
-//                     new_panel.add(tile_name);
-
-//                     mini_grid = new JPanel();
-//                     mini_grid.setBackground(Color.BLACK);
-//                     mini_grid.setLayout(new GridLayout(2, 2));
-//                     mini_grid.add(idx_label);
-//                     mini_grid.add(solid_label);
-//                     mini_grid.add(idx_input);
-//                     mini_grid.add(solid_check);
-
-//                     new_panel.add(mini_grid);
-
-//                     //Handles what tile is selecting for placing on grid
-//                     new_panel.addMouseListener(
-//                         new CardHandler(
-//                             panel, tile,
-//                             idx_input
-//                         )
-//                     );
-
-//                     //add to tile data ArrayList in panel for finalizing purposes
-//                     panel.add_tile_data(tile, idx_input, solid_check);
-//                     cards.add(new_panel);
-//                     //display selection of tiles on window
-//                     main_panel.add(new_panel);
-//                 }
-//             }
-
-//             revalidate();
-
-//         } else {
-//             System.out.println("Cannot initialize, directory is empty");
-//         }
-
-    // }
 }

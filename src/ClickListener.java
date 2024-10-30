@@ -2,13 +2,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.JFileChooser;
-
 public class ClickListener implements ActionListener {
 
     DataHandler data_handler;
+    TileListHandler TL_handler;
 
-    public ClickListener(DataHandler data_handler) {
+    public ClickListener(DataHandler data_handler, TileListHandler TL_handler) {
         this.data_handler = data_handler;
+        this.TL_handler = TL_handler;
     }
 
     @Override
@@ -22,7 +23,8 @@ public class ClickListener implements ActionListener {
             File selected_folder = file_chooser.getSelectedFile();
             System.out.println("Selected folder: " + selected_folder);
             
-            //data_handler.refresh_list(false);
+            File[] files = selected_folder.listFiles();
+            if(files != null) TL_handler.loadTiles(files);
             
         }
     }
