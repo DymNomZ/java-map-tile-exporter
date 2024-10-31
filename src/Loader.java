@@ -12,7 +12,8 @@ public class Loader implements ActionListener {
 
     int[][] loaded_map_indexes = null;
     int[][] tile_data_indexes = null;
-    ArrayList<TileData> loaded_tile_data = new ArrayList<>();
+    ArrayList<Tile> loaded_tiles = new ArrayList<>();
+    ArrayList<ZipEntry> png_entries = new ArrayList<>();
     
     DataHandler data_handler;
 
@@ -41,7 +42,7 @@ public class Loader implements ActionListener {
                     // Get an enumeration of the entries in the zip file
                     Enumeration<? extends ZipEntry> entries = zip_file.entries();
 
-                    // Iterate over the entries and print their names
+                    // Iterate over the entries
                     System.out.println("Zip contents: ");
                     while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
@@ -62,22 +63,35 @@ public class Loader implements ActionListener {
                         }
                     }
 
-                    //load the pngs
+                    //store the pngs in an ArrayList first
                     entries = zip_file.entries();
                     while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
 
                         if(entry.getName().endsWith(".png")){
-                            loaded_tile_data = data_handler.readImages(zip_file, entry, tile_data_indexes);
+                            png_entries.add(entry);
                         }
                     }
 
+                    //Iterate until png matches index
+                    for(int i = 0; i < tile_data_indexes.length; i++){
+                        for(ZipEntry z : png_entries){
+                            //extract index at the beginning of the png name
+                            String image_index = z.getName().substring(0, z.getName().lastIndexOf('$'));
+
+                            if(Integer.parseInt(image_index) == tile_data_indexes[i][0]){
+                                loaded_tiles.add(data_handler.readImage(zip_file, z, tile_data_indexes, i));
+                            }
+                        }
+                    }
+                        
+
                     //Check print
-                    System.out.println(loaded_tile_data.size());
-                    for(TileData t : loaded_tile_data){
+                    System.out.println(loaded_tiles.size());
+                    for(Tile t : loaded_tiles){
                         System.out.println(
-                            t.tile.name + " " + t.tile.index + " " 
-                            + t.tile.is_solid + " " + t.input.getText());
+                            t.name + " " + t.index + " " 
+                            + t.is_solid + " " + t.is_animated);
                     }
 
                     zip_file.close();
@@ -87,9 +101,9 @@ public class Loader implements ActionListener {
                 }
 
                 //build loaded map on grid via data handler
-                data_handler.panel.grid.loadMapTiles(loaded_map_indexes, loaded_tile_data);
-                //load tiles for tile list
-                //data_handler.panel.tile_list.loadTiles(loaded_tile_data);
+                data_handler.panel.grid.loadMapTiles(loaded_map_indexes, loaded_tiles);
+                //load tiles for tile list but validate first via tile handler
+                data_handler.panel.tile_list.loadTiles(loaded_tiles);
 
             }else System.out.println("Canceled loading...");
         }

@@ -42,14 +42,14 @@ public class TileListHandler {
             if(file.getName().endsWith(".png") && !isDuplicate(texture_name)){
 
                 //create tile
-                Tile tile = new Tile(file.getAbsolutePath(), 0, texture_name, false);
+                Tile tile = new Tile(file.getAbsolutePath(), texture_name, 0, false, false);
 
                 loaded_tiles.add(tile);
                 
             }
         }
 
-        tile_list.loadTiles(loaded_tiles);
+        tile_list.addTiles(loaded_tiles);
 
     }
 }

@@ -1,4 +1,3 @@
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -10,8 +9,6 @@ import javax.swing.JFileChooser;
 
 public class Saver implements ActionListener {
 
-    ArrayList<TileData> loaded_tile_data = new ArrayList<>();
-
     DataHandler data_handler;
 
     public Saver(DataHandler data_handler) {
@@ -20,6 +17,10 @@ public class Saver implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        save();
+    }
+
+    public void save(){
         JFileChooser file_chooser = new JFileChooser();
         file_chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         
@@ -30,10 +31,15 @@ public class Saver implements ActionListener {
             System.out.println("Selected folder: " + selected_folder);
             
             //get finalized map from grid via data handler
-            Tile[][] map_data = data_handler.panel.grid.finalizedTiles();
+            Tile[][] grid_tiles = data_handler.panel.grid.getTiles();
+            //get images of used tiles on the grid
+            ArrayList<Tile> used_tiles = data_handler.getusedTiles();
 
             //get map name from textfield
             String map_name = GUI.TextFields.MAP_NAME.getText();
+
+            //validate
+            if(map_name.equals("")) map_name = "no_name";
 
             //Zip output to selected directory
             File output_zip = new File(selected_folder, map_name + ".zip");
@@ -52,11 +58,11 @@ public class Saver implements ActionListener {
                 File temp_file = new File("temp.txt");
                 FileWriter writer = new FileWriter(temp_file);
 
-                for (int i = 0; i < map_data.length; i++) {
-                    for(int j = 0; j < map_data[i].length; j++) {
+                for (int i = 0; i < grid_tiles.length; i++) {
+                    for(int j = 0; j < grid_tiles[i].length; j++) {
 
                         //write to txt
-                        writer.write(map_data[i][j].index + " ");
+                        writer.write(grid_tiles[i][j].index + " ");
 
                     }
                     writer.write("\n");
@@ -80,33 +86,31 @@ public class Saver implements ActionListener {
                 System.out.println("Error writing map.txt file");
             }
 
-            //get tile data from tile list via data handler
-            ArrayList<TileData> tile_data = data_handler.getFinalizedTileData();
-
-            //ZipEntry for tiles
-            for(TileData t : tile_data){
-                try {
-                    zos.putNextEntry(new ZipEntry(t.tile.name + ".png"));
-                    // Write the image data to the ZIP file
-                    ImageIO.write(t.tile.image, "png", zos);
-                    zos.closeEntry();
-                } catch (IOException e1) {
-                    System.out.println("Error creating map zip file");
-                }
-            }
-
-            //ZipEntry for tile data
+            //ZipEntry for tile data and pngs
             try {
                 File temp_file = new File("temp.txt");
                 FileWriter writer = new FileWriter(temp_file);
 
-                for(TileData t: tile_data){
-                    //write tile index | solid |
-                    writer.write(t.tile.index + " ");
-                    if(t.solid_state.isSelected()){
-                        writer.write("1");
-                    }else writer.write("0");
-                    writer.write(" \n");
+                for(Tile t: used_tiles){
+
+                    try {
+                        zos.putNextEntry(new ZipEntry(t.index + "$" + t.name + ".png"));
+                        // Write the image data to the ZIP file
+                        ImageIO.write(t.image, "png", zos);
+                        zos.closeEntry();
+                    } catch (IOException e1) {
+                        System.out.println("Error creating map zip file");
+                    }
+
+                    //write tile index | solid | animated
+                    writer.write(t.index + " ");
+                    if(t.is_solid) writer.write("1 ");
+                    else writer.write("0 ");
+
+                    if(t.is_animated) writer.write("1 ");
+                    else writer.write("0 ");
+
+                    writer.write("\n");
                 }
                 writer.close();
 

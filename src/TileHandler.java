@@ -1,11 +1,11 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class CursorHandler implements MouseListener {
+public class TileHandler implements MouseListener {
     private final DataHandler data_handler;
-    private Tile tile;
+    public Tile tile;
 
-    public CursorHandler(DataHandler data_handler, Tile tile){
+    public TileHandler(DataHandler data_handler, Tile tile){
         this.data_handler = data_handler;
         this.tile = tile;
 
@@ -16,7 +16,12 @@ public class CursorHandler implements MouseListener {
         System.out.println("Selected Tile: " + tile.name);
 
         System.out.println("Assigned index: " + tile.index);
-        data_handler.panel.get_selected_tile(tile, tile.index);
+        System.out.println("Is Solid? " + tile.is_solid);
+        System.out.println("Is Animated? " + tile.is_animated);
+
+        data_handler.panel.updateSelectedTile(tile);
+        data_handler.panel.settings.editTileProperties(this);
+        data_handler.queued_tile_handler = this;
     }
 
     @Override

@@ -72,9 +72,6 @@ public class Cursor {
         Graphics G, 
         Tile tile
     ){
-        //check if it is not void tile, otherwise, not render, void tile represents nothing is selected
-        if(tile.image != blank){
-            G.drawImage(tile.image, screen_x, screen_y, tile_size, tile_size, null);
-        }
+        G.drawImage(tile.image, screen_x, screen_y, tile_size, tile_size, null);
     }
 }

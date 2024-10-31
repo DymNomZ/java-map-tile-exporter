@@ -22,10 +22,10 @@ public class Panel extends JPanel {
     private Tile tile = null;
     private Tile blank = null;
 
-    private MouseHandler mouse;
     private Cursor cursor;
     private final DataHandler data_handler;
 
+    public MouseHandler mouse;
     public Camera cam;
     public final Grid grid;
     
@@ -51,26 +51,15 @@ public class Panel extends JPanel {
         this.add(settings, BorderLayout.WEST);
         this.add(tile_list, BorderLayout.EAST);
 
-        tile = new Tile("void.png", 0, "void", false);
-        blank = new Tile("void.png", 0, "void", false);
+        tile = new Tile("void.png", "void", 0, false, false);
+        blank = new Tile("void.png", "void", 0, false, false);
 
         this.addMouseMotionListener(mouse);
         this.addMouseListener(mouse);
         this.addMouseWheelListener(mouse);
     }
 
-    public void add_tile_data(Tile tile, JTextField input, JCheckBox solid_state){
-        //add tiles and data from tile list
-        //loaded_tile_data.add(new TileData(tile, input, solid_state));
-    }
-
-    public void updateGrid(int col, int row){
-        //re-initialize_grid, wiping off map
-        grid.initializeGrid(col, row);
-        repaint();
-    }
-
-    public void get_selected_tile(Tile selected_tile, int new_index){
+    public void updateSelectedTile(Tile selected_tile){
         //check if received tile is the same as previous, meaning, you are deselecting
         if(this.tile == selected_tile){
             this.tile = blank;
@@ -78,7 +67,6 @@ public class Panel extends JPanel {
         //else assign the new one
         else{
             this.tile = selected_tile;
-            this.tile.index = new_index;
         }
     }
 

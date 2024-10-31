@@ -19,11 +19,11 @@ public class Tile {
     
     public BufferedImage image = null;
     public String path, name;
-    public boolean is_solid = false;
+    public boolean is_solid = false, is_animated = false;
     public int index = 0;
 
     //main constructor for creating
-    public Tile(String path, int index, String name, boolean is_solid){
+    public Tile(String path, String name, int index, boolean is_solid, boolean is_animated){
 
         try {
             if(path.equals("void.png")){
@@ -34,16 +34,18 @@ public class Tile {
             System.out.println("Error loading tile image");
         }
         
-        this.index = index;
         this.name = name;
+        this.index = index;
         this.is_solid = is_solid;
+        this.is_animated = is_animated;
     }
 
     //Second constructor for loading
-    public Tile(int index, boolean is_solid, String name, BufferedImage image){
+    public Tile(BufferedImage image, String name, int index, boolean is_solid, boolean is_animated){
         this.image = image;
-        this.index = index;
         this.name = name;
+        this.index = index;
         this.is_solid = is_solid;
+        this.is_animated = is_animated;
     }
 }

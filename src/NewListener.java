@@ -16,6 +16,10 @@ public class NewListener implements ActionListener {
             String h = GUI.TextFields.MAP_HEIGHT.getText();
             //check if both text fields have values in them
             if(l.length() != 0 && h.length() != 0){
+
+                Saver temp = new Saver(data_handler);
+                temp.save();
+
                 int len = Integer.parseInt(l);
                 int hei = Integer.parseInt(h);
 

@@ -8,9 +8,9 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 
     public int mouse_x = 0, mouse_y = 0, clicked_x, clicked_y, recent_x = 0, recent_y = 0;
     public int scale_factor = 1, wheel_rotation;
-    public int tile_x = 0, tile_y = 0; //for tile_handler
-    public boolean is_pressed = false, is_dragged = false, is_clicked = false;
-    public boolean left_pressed = false, right_pressed = false, middle_pressed = false;
+    public int tile_x = 0, tile_y = 0; //for cursor
+    public boolean paint_control = false, is_pressed = false, is_dragged = false, is_clicked = false;
+    public boolean left_pressed = false, right_pressed = false;
 
     public MouseHandler(){
 
@@ -41,14 +41,13 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
         is_pressed = true;
         switch(e.getButton()){
             case 1 -> left_pressed = true;
-            case 2 -> middle_pressed = !middle_pressed;
+            case 2 -> paint_control = !paint_control;
             case 3 -> right_pressed = true;
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        //System.out.println("I am released");
         //reset
         is_pressed = false;
         is_dragged = false;
@@ -78,7 +77,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
             if(scale_factor == 1) scale_factor = 2;
            else if(scale_factor == 2) scale_factor = 3; 
         }
-        //System.out.println(scale_factor);
+
     }
 
     @Override

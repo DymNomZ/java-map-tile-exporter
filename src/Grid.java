@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -5,9 +6,13 @@ public class Grid {
     
     private int tile_size;
     private int map_length, map_height;
+    private final Tile DEFAULT_TILE;
+
     Tile[][] tiles;
     
     public Grid(int col, int row){
+
+        DEFAULT_TILE = new Tile("void.png", "void", 0, false, false);
 
         initializeGrid(col, row);
     }
@@ -16,7 +21,7 @@ public class Grid {
         Tile[][] temp = new Tile[row][col];
         for(int i = 0; i < row; i++){
             for(int j = 0; j < col; j++){
-                temp[i][j] = new Tile("void.png", 0, "void", false);
+                temp[i][j] = DEFAULT_TILE;
             }
         }
 
@@ -66,72 +71,52 @@ public class Grid {
 
     }
 
-    public void loadMapTiles(int[][] tile_indexes, ArrayList<TileData> tile_data){
+    public Tile[][] getTiles(){
+        return tiles;
+    }
+
+    public void updateGridTiles(Tile updated_tile){
+
+        int tiles_updated = 0; // for validation
+
+        for(int i = 0; i < tiles.length; i++){
+            for(int j = 0; j < tiles[i].length; j++){
+                //update the same tile via name comparing
+                if(tiles[i][j].name.equals(updated_tile.name)){
+                    tiles[i][j] = updated_tile;
+                    tiles_updated++;
+                }
+            }
+        }
+
+        System.out.println("Updating tiles complete! No. of tiles updated: " + tiles_updated);
+
+    }
+
+
+    public void loadMapTiles(int[][] tile_indexes, ArrayList<Tile> tiles){
 
         map_length = tile_indexes[0].length;
         map_height = tile_indexes.length;
 
-        tiles = new Tile[map_height][map_length];
+        this.tiles = new Tile[map_height][map_length];
         for(int i = 0; i < map_height; i++){
             for(int j = 0; j < map_length; j++){
                 
                 //check which tile in tile data matches index
                 if(tile_indexes[i][j] != 0){
-                    for(TileData td : tile_data){
-                        if(td.tile.index == tile_indexes[i][j]){
-                            tiles[i][j] = td.tile;
+                    for(Tile t : tiles){
+                        if(t.index == tile_indexes[i][j]){
+                            this.tiles[i][j] = t;
                             break;
                         }
                     }
                 }else{
-                    tiles[i][j] = new Tile("void.png", 0, "void", false);
+                    this.tiles[i][j] = DEFAULT_TILE;
                 }
                     
             }
         }
-    }
-
-    //finalize tiles to to ensure all data is correct
-    public Tile[][] finalizedTiles(){
-        
-        int loaded_tile_data_idx = 0;
-        boolean loaded_tile_solid_state = false;
-        
-        ArrayList<TileData> loaded_tile_data = null, final_tile_data = null;
-
-        for(TileData t : loaded_tile_data){
-            for(int i = 0; i < tiles.length; i++){
-                for(int j = 0; j < tiles[i].length; j++){
-
-                    if(t.input.getText().length() != 0){
-                        loaded_tile_data_idx = Integer.parseInt(t.input.getText());
-                    }
-
-                    loaded_tile_solid_state = t.solid_state.isSelected();
-
-                    //if tile exists on the grid
-                    if(t.tile == tiles[i][j]){
-                        if(loaded_tile_data_idx != tiles[i][j].index){
-                            tiles[i][j].index = loaded_tile_data_idx;
-                        }
-
-                        if(loaded_tile_solid_state != tiles[i][j].is_solid){
-                            tiles[i][j].is_solid = loaded_tile_solid_state;
-                        }
-                        System.out.println(t.tile.name);
-                        if(!(final_tile_data.contains(t))) final_tile_data.add(t);
-                        System.out.println("size: " + final_tile_data.size());
-                    }
-                    //if not update tile still
-                    else {
-                        t.tile.index = loaded_tile_data_idx;
-                        t.tile.is_solid = loaded_tile_solid_state;
-                    }
-                }
-            }
-        }
-
-        return tiles;
     }
 
     void display(
@@ -163,8 +148,18 @@ public class Grid {
                         screen_x = tile_x - cam.x_pos + cam.screen_x;    
                         screen_y = tile_y - cam.y_pos + cam.screen_y; 
 
+                        //handle drawing mode
+                        if(!mouse.paint_control){
+                            mouse.is_clicked = false;
+                            GUI.Labels.PAINT.setForeground(Color.RED);
+                            GUI.Labels.PAINT.setText("Off");
+                        }else{
+                            GUI.Labels.PAINT.setForeground(Color.GREEN);
+                            GUI.Labels.PAINT.setText("On");
+                        }
+
                         //handle placing of tiles
-                        if(mouse.is_clicked){
+                        if(mouse.is_pressed || mouse.is_clicked){
                             if(
                                 //check if mouse coordinates matches with the tile's screen coords
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
@@ -173,11 +168,7 @@ public class Grid {
                                 //if so, that means, the mouse is pointing at the tile, place it
                                 tiles[grid_row][grid_col] = tile;
                                 //replacing the tile in the tiles array that will draw on the grid
-
-                                //handle drawing mode
-                                if(!mouse.middle_pressed){
-                                    mouse.is_clicked = false;
-                                }
+                                
                             }
                         }
                         

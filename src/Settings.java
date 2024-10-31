@@ -25,7 +25,6 @@ public class Settings extends JPanel {
         
 
         GUI.Panels.MAP_SETTINGS.setLayout(gb_layout);
-        GUI.Panels.MAP_SETTINGS.setBackground(Color.BLACK);
 
         //adding components
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -65,17 +64,95 @@ public class Settings extends JPanel {
         gbc.gridx = 2;
         GUI.Panels.MAP_SETTINGS.add(GUI.Buttons.NEW, gbc);
 
+        add(GUI.Panels.MAP_SETTINGS);
+
+        GUI.Panels.TOOLS.setLayout(gb_layout);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 4;
+        GUI.Panels.TOOLS.add(GUI.Labels.TOOLS, gbc);
+
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        GUI.Panels.TOOLS.add(GUI.Buttons.PAINT, gbc);
+        GUI.Buttons.PAINT.addActionListener(new ClickListener(data_handler));
+
+        gbc.gridx = 1;
+        GUI.Panels.TOOLS.add(GUI.Labels.PAINT, gbc);
+
+        gbc.gridx = 2;
+        GUI.Panels.TOOLS.add(GUI.Buttons.BUCKET, gbc);
+        GUI.Buttons.BUCKET.addActionListener(new ClickListener(data_handler));
+
+        gbc.gridx = 3;
+        GUI.Panels.TOOLS.add(GUI.Labels.BUCKET, gbc);
+
+        add(GUI.Panels.TOOLS);
+
+        GUI.Panels.TILE_PROPERTIES.setLayout(gb_layout);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Labels.TILE_PROPERTIES, gbc);
+
+        gbc.gridy = 1;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Labels.TILE_NAME, gbc);
+
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 2;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Labels.TILE_IMAGE, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridheight = 1;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Labels.INDEX, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.TextFields.TILE_INDEX, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Labels.SOLID, gbc);
+
+        gbc.gridx = 1;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Checkboxes.SOLID, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Labels.ANIMATED, gbc);
+
+        gbc.gridx = 1;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Checkboxes.ANIMATED, gbc);
+
         gbc.gridx = 0;
         gbc.gridy = 6;
-        gbc.gridwidth = 3;
-        GUI.Panels.MAP_SETTINGS.add(GUI.Labels.TILE_SETTINGS, gbc);
+        gbc.gridwidth = 2;
+        GUI.Panels.TILE_PROPERTIES.add(GUI.Buttons.SAVE_CHANGES, gbc);
 
-        add(GUI.Panels.MAP_SETTINGS);
+        add(GUI.Panels.TILE_PROPERTIES);
 
         GUI.Buttons.RESIZE.addActionListener(new Resizer(data_handler));
         GUI.Buttons.SAVE.addActionListener(new Saver(data_handler));
         GUI.Buttons.LOAD.addActionListener(new Loader(data_handler));
         GUI.Buttons.NEW.addActionListener(new NewListener(data_handler));
+        GUI.Buttons.SAVE_CHANGES.addActionListener(new ClickListener(data_handler));
+    }
+
+    public void editTileProperties(TileHandler th){
+        //Overwrite current displayed tile properties
+        GUI.Labels.TILE_NAME.setText("<html>" + th.tile.name + "<html>");
+        GUI.Labels.TILE_IMAGE.setIcon(
+            new ImageIcon(th.tile.image.getScaledInstance(64, 64, Image.SCALE_SMOOTH))
+        );
+        GUI.TextFields.TILE_INDEX.setText(String.format("%d", th.tile.index));
+        GUI.Checkboxes.SOLID.setSelected(th.tile.is_solid);
+        GUI.Checkboxes.ANIMATED.setSelected(th.tile.is_animated);
+
+        //Update tile on the tile handler to reflect changes on tile list
+        // T.tile = tile;
     }
     
 }
