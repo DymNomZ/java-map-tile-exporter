@@ -159,7 +159,7 @@ public class Grid {
                         }
 
                         //handle placing of tiles
-                        if(mouse.is_pressed || mouse.is_clicked){
+                        if(mouse.is_clicked || mouse.left_pressed){
                             if(
                                 //check if mouse coordinates matches with the tile's screen coords
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&

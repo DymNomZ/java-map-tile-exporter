@@ -114,9 +114,8 @@ public class DataHandler {
             map_data_stream = zip.getInputStream(map);
             reader = new BufferedReader(new InputStreamReader(map_data_stream));
 
-            String line = reader.readLine();
             int map_h = 0;
-            int map_l = line.length() / 2; //because of spaces
+            int map_l = reader.readLine().split(" ").length; //previous implementation was faulty due to not taking into account double digits or more which affects spacing
 
             do{
                 map_h++;
