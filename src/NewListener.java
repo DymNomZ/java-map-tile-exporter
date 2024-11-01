@@ -17,6 +17,8 @@ public class NewListener implements ActionListener {
             //check if both text fields have values in them
             if(l.length() != 0 && h.length() != 0){
 
+                data_handler.panel.grid.has_changes = false;
+
                 Saver temp = new Saver(data_handler);
                 temp.save();
 

@@ -14,6 +14,10 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
+        WindowHandler WH = new WindowHandler(panel);
+
+        window.addWindowListener(WH);
+
         panel.startClock();
     }
 }

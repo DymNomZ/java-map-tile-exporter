@@ -4,9 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
 public class Panel extends JPanel {
@@ -23,7 +21,7 @@ public class Panel extends JPanel {
     private Tile blank = null;
 
     private Cursor cursor;
-    private final DataHandler data_handler;
+    public  DataHandler data_handler;
 
     public MouseHandler mouse;
     public Camera cam;
@@ -41,7 +39,7 @@ public class Panel extends JPanel {
 
         cam = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, DEF_TILE_COL, DEF_TILE_ROW);
         grid =  new Grid(DEF_TILE_COL, DEF_TILE_ROW);
-        mouse = new MouseHandler(SCREEN_WIDTH, SCREEN_HEIGHT);
+        mouse = new MouseHandler(SCREEN_WIDTH, SCREEN_HEIGHT, this);
         cursor = new Cursor(SCREEN_WIDTH, SCREEN_HEIGHT, tile_size, scale, DEF_TILE_COL, DEF_TILE_ROW);
 
         data_handler = new DataHandler(this);
@@ -57,11 +55,12 @@ public class Panel extends JPanel {
         this.addMouseMotionListener(mouse);
         this.addMouseListener(mouse);
         this.addMouseWheelListener(mouse);
+        this.addKeyListener(new WindowHandler(this));
     }
 
-    public void updateSelectedTile(Tile selected_tile){
+    public void updateSelectedTile(Tile selected_tile, boolean is_editing){
         //check if received tile is the same as previous, meaning, you are deselecting
-        if(this.tile == selected_tile){
+        if(this.tile == selected_tile && !is_editing){
             this.tile = blank;
         }
         //else assign the new one

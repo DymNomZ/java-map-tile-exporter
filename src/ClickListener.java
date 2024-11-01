@@ -1,8 +1,6 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.util.regex.Pattern;
 
 public class ClickListener implements ActionListener {
     
@@ -27,24 +25,26 @@ public class ClickListener implements ActionListener {
             }
         }
         if(e.getSource() == GUI.Buttons.BUCKET){
-            // if(false){
-            //     GUI.Labels.BUCKET.setForeground(Color.GREEN);
-            //     GUI.Labels.BUCKET.setText("On");
-            // }
-            // else{
-            //     GUI.Labels.BUCKET.setForeground(Color.RED);
-            //     GUI.Labels.BUCKET.setText("Off");
-            // }
+            if(!data_handler.panel.grid.bucket){
+                GUI.Labels.BUCKET.setForeground(Color.GREEN);
+                GUI.Labels.BUCKET.setText("On");
+                data_handler.panel.grid.bucket = true;
+            }
+            else{
+                GUI.Labels.BUCKET.setForeground(Color.RED);
+                GUI.Labels.BUCKET.setText("Off");
+                data_handler.panel.grid.bucket = false;
+            }
         }
         if(e.getSource() == GUI.Buttons.SAVE_CHANGES){
             //validate index
             String raw_index = GUI.TextFields.TILE_INDEX.getText();
-            if(!isDigitOnly(raw_index)) displayPopUp();
-            else{
-
+            if(!data_handler.isDigitOnly(raw_index)) displayPopUp();
+            else if(data_handler.queued_tile_handler != null){
+                data_handler.panel.grid.has_changes = true;
                 updateSelectedTile(raw_index);
                 //pass to panel via data handler to update on grid and settings
-                data_handler.panel.updateSelectedTile(data_handler.queued_tile_handler.tile);
+                data_handler.panel.updateSelectedTile(data_handler.queued_tile_handler.tile, true);
                 data_handler.panel.settings.editTileProperties(data_handler.queued_tile_handler);
                 data_handler.panel.grid.updateGridTiles(data_handler.queued_tile_handler.tile);
                 System.out.println("Changes saved!");
@@ -54,10 +54,6 @@ public class ClickListener implements ActionListener {
 
     public void displayPopUp(){
         //TO-DO DISPLAY POP UP FOR INVALIDATION!
-    }
-
-    public static boolean isDigitOnly(String str) {
-        return Pattern.matches("[0-9]+", str);
     }
 
     public void updateSelectedTile(String raw_index){

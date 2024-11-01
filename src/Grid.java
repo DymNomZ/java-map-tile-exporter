@@ -1,12 +1,19 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Grid {
     
     private int tile_size;
     private int map_length, map_height;
     private final Tile DEFAULT_TILE;
+
+    public boolean has_changes = false;
+    public boolean bucket = false;
+
+    
 
     Tile[][] tiles;
     
@@ -159,7 +166,17 @@ public class Grid {
                         }
 
                         //handle placing of tiles
-                        if(mouse.is_clicked || mouse.left_pressed){
+                        if(bucket && mouse.is_pressed){
+                            if(
+                                //check if mouse coordinates matches with the tile's screen coords
+                                (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
+                                (mouse.tile_y > screen_y && mouse.tile_y < screen_y + tile_size)
+                            ){
+                                handleBucket(grid_col, grid_row, tile, mouse);
+                                has_changes = true;
+                            }
+                        }
+                        else if(mouse.is_clicked || mouse.left_pressed){
                             if(
                                 //check if mouse coordinates matches with the tile's screen coords
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
@@ -169,6 +186,8 @@ public class Grid {
                                 tiles[grid_row][grid_col] = tile;
                                 //replacing the tile in the tiles array that will draw on the grid
                                 
+                                //detect changes
+                                if(!tile.name.equals("void")) has_changes = true;
                             }
                         }
                         
@@ -185,5 +204,47 @@ public class Grid {
             grid_col = 0;
             grid_row++;
         }
+    }
+
+    public void handleBucket(int base_x, int base_y, Tile tile, MouseHandler mouse){
+        
+        //get the clicked, original tile
+        Tile old_tile = tiles[base_y][base_x];
+        int flooded_tiles = 0;
+
+        //if clicking on the same tile, just return
+        if(old_tile.name.equals(tile.name)) return;
+
+        Queue<Point> coordinates = new LinkedList<>();
+        coordinates.add(new Point(base_x, base_y));
+
+        while(!coordinates.isEmpty()){
+            //get latest coords to check
+            Point check = coordinates.poll();
+
+            if(
+                //check if at borders
+                check.y < 0 || check.y >= map_height || check.x < 0 || check.x >= map_length || 
+                //check if point reaches the "walls" of another color 
+                !tiles[check.y][check.x].name.equals(old_tile.name)
+            ){
+                continue;
+            }
+            //perform flooding
+            else{
+                tiles[check.y][check.x] = tile;
+                //queue the 4 other points (up, down, left, right)
+                coordinates.add(new Point(check.x - 1, check.y));
+                coordinates.add(new Point(check.x + 1, check.y));
+                coordinates.add(new Point(check.x, check.y - 1));
+                coordinates.add(new Point(check.x, check.y + 1));
+
+                flooded_tiles++;
+            }
+        }
+
+        mouse.is_pressed = false;
+
+        System.out.println("Bucket complete! Total flooded tiles: " + flooded_tiles);
     }
 }

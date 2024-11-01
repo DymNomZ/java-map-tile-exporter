@@ -7,6 +7,7 @@
 <JVMSearchPath>exepath</JVMSearchPath>
 <JVMSearchPath>jview</JVMSearchPath>
 <arguments></arguments>
+<bundledJVMPath>JRE</bundledJVMPath>
 <embeddedJar>true</embeddedJar>
 <executableName>..\j2dc-map-editor.exe</executableName>
 <iconLocation>..\..\Pictures\DymNominator Gaming Profile Pictures\D.jpg</iconLocation>

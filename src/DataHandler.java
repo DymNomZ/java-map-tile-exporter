@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
@@ -16,6 +17,10 @@ public class DataHandler {
     
     public DataHandler(Panel panel){
         this.panel = panel;
+    }
+
+    public boolean isDigitOnly(String str) {
+        return Pattern.matches("[0-9]+", str);
     }
 
     public ArrayList<Tile> getusedTiles(){

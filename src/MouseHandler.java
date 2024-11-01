@@ -12,16 +12,20 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
     public boolean paint_control = false, is_pressed = false, is_dragged = false, is_clicked = false;
     public boolean left_pressed = false, right_pressed = false;
 
-    public MouseHandler(){
+    Panel panel;
 
+    public MouseHandler(){
+        
     }
 
-    public MouseHandler(int SCREEN_WIDTH, int SCREEN_HEIGHT){
+    public MouseHandler(int SCREEN_WIDTH, int SCREEN_HEIGHT, Panel panel){
         //sets default coords of mouse
         mouse_x = SCREEN_WIDTH / 2;
         mouse_y = SCREEN_HEIGHT / 2;
         recent_x = mouse_x;
         recent_y = mouse_y;
+
+        this.panel = panel;
     }
     
     @Override
@@ -44,6 +48,8 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
             case 2 -> paint_control = !paint_control;
             case 3 -> right_pressed = true;
         }
+        //Exit focus on TextFields
+        panel.requestFocusInWindow();
     }
 
     @Override

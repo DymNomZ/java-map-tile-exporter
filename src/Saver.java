@@ -17,6 +17,7 @@ public class Saver implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        data_handler.panel.grid.has_changes = false;
         save();
     }
 

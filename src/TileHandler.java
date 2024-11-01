@@ -19,7 +19,7 @@ public class TileHandler implements MouseListener {
         System.out.println("Is Solid? " + tile.is_solid);
         System.out.println("Is Animated? " + tile.is_animated);
 
-        data_handler.panel.updateSelectedTile(tile);
+        data_handler.panel.updateSelectedTile(tile, false);
         data_handler.panel.settings.editTileProperties(this);
         data_handler.queued_tile_handler = this;
     }

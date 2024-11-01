@@ -166,6 +166,15 @@ public class GUI {
 
             SAVE_CHANGES.setBackground(Color.BLACK);
             SAVE_CHANGES.setForeground(Color.WHITE);
+
+            RESIZE.setFocusable(false);
+            LOAD.setFocusable(false);
+            SAVE.setFocusable(false);
+            ADD.setFocusable(false);
+            NEW.setFocusable(false);
+            PAINT.setFocusable(false);
+            BUCKET.setFocusable(false);
+            SAVE_CHANGES.setFocusable(false);
         }
     }
 
@@ -179,6 +188,9 @@ public class GUI {
 
             SOLID.setBackground(Color.BLACK);
             ANIMATED.setBackground(Color.BLACK);
+
+            SOLID.setFocusable(false);
+            ANIMATED.setFocusable(false);
         }
     }
 

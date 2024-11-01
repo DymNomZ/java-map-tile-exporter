@@ -12,10 +12,13 @@ public class Resizer implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == GUI.Buttons.RESIZE){
+            
+            data_handler.panel.grid.has_changes = true;
+
             String l = GUI.TextFields.MAP_LENGTH.getText();
             String h = GUI.TextFields.MAP_HEIGHT.getText();
             //check if both text fields have values in them
-            if(l.length() != 0 && h.length() != 0){
+            if(l.length() != 0 && h.length() != 0 && data_handler.isDigitOnly(l) && data_handler.isDigitOnly(h)){
                 int len = Integer.parseInt(l);
                 int hei = Integer.parseInt(h);
 
@@ -30,6 +33,7 @@ public class Resizer implements ActionListener {
             }
             else {
                 //POP-UP DAIALOG HERE
+                System.out.println("Non-number inputs!");
             }
         }
     }
