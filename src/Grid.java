@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class Grid {
     
@@ -13,7 +14,11 @@ public class Grid {
     public boolean has_changes = false;
     public boolean bucket = false;
 
-    
+    Point current; // to track latest point
+    Stack<Point> undo = new Stack<>();
+    Stack<Point> redo = new Stack<>();
+
+    int counter = 0;
 
     Tile[][] tiles;
     
@@ -172,6 +177,11 @@ public class Grid {
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
                                 (mouse.tile_y > screen_y && mouse.tile_y < screen_y + tile_size)
                             ){
+                                // current = new Point(
+                                //     grid_col, grid_row, 
+                                //     tiles[grid_row][grid_col], 
+                                //     true
+                                // );
                                 handleBucket(grid_col, grid_row, tile, mouse);
                                 has_changes = true;
                             }
@@ -182,14 +192,40 @@ public class Grid {
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
                                 (mouse.tile_y > screen_y && mouse.tile_y < screen_y + tile_size)
                             ){
+                                //add old tile to undo stack
+                                Point newp = new Point(
+                                                    grid_col, grid_row, 
+                                                    tiles[grid_row][grid_col], 
+                                                    false
+                                                );
+
+                                //only add once, previously multiple copies were added due to clock speed (milliseconds)
+                                if(!checkIfDuplicate(newp) && !bucket){
+                                    undo.push(newp);
+                                    System.out.println("Undo Pushed: " + newp.x + " " + newp.y + " " 
+                                    + newp.tile.name + " " + newp.tile.is_solid + " " + newp.tile.is_animated);
+                                }
+
+                                counter++;
+                                
+
+                                //check if redo is not empty, if it is not empty therefore the past is changed delete the future
+                                if(!redo.isEmpty()){
+                                    redo.clear();
+                                    System.out.println("Redo cleared! Redo size: " + redo.size());
+                                }
+                                
                                 //if so, that means, the mouse is pointing at the tile, place it
                                 tiles[grid_row][grid_col] = tile;
                                 //replacing the tile in the tiles array that will draw on the grid
+
+                                //assign to current 
+                                current = newp;
                                 
                                 //detect changes
                                 if(!tile.name.equals("void")) has_changes = true;
                             }
-                        }
+                        }else counter = 0;
                         
                         G.drawImage(
                             tiles[grid_row][grid_col].image, 
@@ -206,6 +242,67 @@ public class Grid {
         }
     }
 
+    private boolean checkIfDuplicate(Point check){
+
+        if(undo.isEmpty()) return false;
+
+        Point p = undo.peek();
+       
+        return (p.x == check.x && p.y == check.y && p.tile.name.equals(check.tile.name) && p.is_flooded == check.is_flooded);
+       
+    }
+
+    public void performUndo(){
+
+        //only perform if undo stack is not empty
+        if(!undo.isEmpty()){
+            //handle both flooded and unflooded tiles
+            do{
+                Point p = undo.pop();
+                
+                //place present into redo
+                redo.push(current);
+                // System.out.println("Redo Pushed from Undo: " + p.x + " " + p.y + " " 
+                //                     + p.tile.name + " " + p.tile.is_solid + " " + p.tile.is_animated);
+                // System.out.println("Redo size: " + redo.size());
+                //undo on grid
+                if(p.y < 0 || p.y >= map_height || p.x < 0 || p.x >= map_length) continue;
+                else tiles[p.y][p.x] = p.tile;
+                //replace current
+                current = p;
+                if(undo.isEmpty()) break;
+            }while(undo.peek().is_flooded);
+        }
+
+        System.out.println("Undo complete! Undo size: " + undo.size());
+        
+    }
+
+    public void performRedo(){
+
+        //only perform if redo stack is not empty
+        if(!redo.isEmpty()){
+            //handle both flooded and unflooded tiles
+            do{
+                Point p = redo.pop();
+
+                current = p;
+                //place present into undo
+                undo.push(current);
+                // System.out.println("Undo Pushed from Redo: " + p.x + " " + p.y + " " 
+                //                     + p.tile.name + " " + p.tile.is_solid + " " + p.tile.is_animated);
+                //redo on grid
+                if(p.y < 0 || p.y >= map_height || p.x < 0 || p.x >= map_length) continue;
+                else tiles[p.y][p.x] = p.tile;
+                //replace current
+                
+                if(redo.isEmpty()) break;
+            }while(redo.peek().is_flooded);
+        }
+
+        System.out.println("Redo complete! Redo size: " + redo.size());
+    }
+
     public void handleBucket(int base_x, int base_y, Tile tile, MouseHandler mouse){
         
         //get the clicked, original tile
@@ -216,11 +313,12 @@ public class Grid {
         if(old_tile.name.equals(tile.name)) return;
 
         Queue<Point> coordinates = new LinkedList<>();
-        coordinates.add(new Point(base_x, base_y));
+        coordinates.add(new Point(base_x, base_y, old_tile, true));
 
         while(!coordinates.isEmpty()){
             //get latest coords to check
             Point check = coordinates.poll();
+            current = check;
 
             if(
                 //check if at borders
@@ -232,12 +330,30 @@ public class Grid {
             }
             //perform flooding
             else{
+                //add old tile to undo stack
+                // current.tile = tiles[check.y][check.x];
+
+                //avoid duplocates
+                if(!checkIfDuplicate(current)){
+                    undo.push(current);
+                    System.out.println("Undo Bucket Pushed: " + current.x + " " + current.y + " " 
+                    + current.tile.name + " " + current.tile.is_solid + " " + current.tile.is_animated);
+                }
+
                 tiles[check.y][check.x] = tile;
                 //queue the 4 other points (up, down, left, right)
-                coordinates.add(new Point(check.x - 1, check.y));
-                coordinates.add(new Point(check.x + 1, check.y));
-                coordinates.add(new Point(check.x, check.y - 1));
-                coordinates.add(new Point(check.x, check.y + 1));
+                if(!checkIfValidCoords(check.x - 1, check.y)){
+                    coordinates.add(new Point(check.x - 1, check.y, tiles[check.y][check.x - 1], true));
+                }
+                if(!checkIfValidCoords(check.x + 1, check.y)){
+                    coordinates.add(new Point(check.x + 1, check.y, tiles[check.y][check.x + 1], true));
+                }
+                if(!checkIfValidCoords(check.x, check.y - 1)){
+                    coordinates.add(new Point(check.x, check.y - 1, tiles[check.y - 1][check.x], true));
+                }
+                if(!checkIfValidCoords(check.x, check.y + 1)){
+                    coordinates.add(new Point(check.x, check.y + 1, tiles[check.y + 1][check.x], true));
+                }
 
                 flooded_tiles++;
             }
@@ -246,5 +362,9 @@ public class Grid {
         mouse.is_pressed = false;
 
         System.out.println("Bucket complete! Total flooded tiles: " + flooded_tiles);
+    }
+
+    private boolean checkIfValidCoords(int x, int y){
+        return (y < 0 || y >= map_height || x < 0 || x >= map_length);
     }
 }

@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 public class DataHandler {
 
     public TileHandler queued_tile_handler;
+    public boolean is_undoing = false, is_redoing = false;
 
     Panel panel;
     

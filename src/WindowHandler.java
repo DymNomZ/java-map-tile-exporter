@@ -23,11 +23,10 @@ public class WindowHandler implements WindowListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyCode());
+        
         if(e.isControlDown()){
 
             int code = e.getKeyCode();
-            System.out.println("adasd");
 
             switch(code) {
 
@@ -37,9 +36,38 @@ public class WindowHandler implements WindowListener, KeyListener {
                 }
                 case KeyEvent.VK_Z -> {
                     //UNDO
+                    if(!panel.data_handler.is_undoing){
+                        panel.data_handler.panel.grid.performUndo();
+                        panel.data_handler.is_undoing = true;
+                    }
                 }
-                case KeyEvent.VK_Y -> {
+                case KeyEvent.VK_X -> {
                     //REDO
+                    if(!panel.data_handler.is_redoing){
+                        panel.data_handler.panel.grid.performRedo();
+                        panel.data_handler.is_redoing = true;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+        if(e.isControlDown()){
+
+            int code = e.getKeyCode();
+
+            switch(code) {
+
+                case KeyEvent.VK_Z -> {
+                    //UNDO
+                    panel.data_handler.is_undoing = false;
+                }
+                case KeyEvent.VK_X -> {
+                    //REDO
+                    panel.data_handler.is_redoing = false;
                 }
             }
         }
@@ -65,8 +93,5 @@ public class WindowHandler implements WindowListener, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {}
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
     
 }
