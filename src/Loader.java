@@ -100,6 +100,10 @@ public class Loader implements ActionListener {
                     System.out.println("Error loading map zip file");
                 }
 
+                //clear previous stacks
+                data_handler.panel.grid.undo.clear();
+                data_handler.panel.grid.redo.clear();
+
                 //build loaded map on grid via data handler
                 data_handler.panel.grid.loadMapTiles(loaded_map_indexes, loaded_tiles);
                 //load tiles for tile list but validate first via tile handler

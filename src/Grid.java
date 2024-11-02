@@ -18,8 +18,6 @@ public class Grid {
     Stack<Point> undo = new Stack<>();
     Stack<Point> redo = new Stack<>();
 
-    int counter = 0;
-
     Tile[][] tiles;
     
     public Grid(int col, int row){
@@ -177,11 +175,6 @@ public class Grid {
                                 (mouse.tile_x > screen_x && mouse.tile_x < screen_x + tile_size) &&
                                 (mouse.tile_y > screen_y && mouse.tile_y < screen_y + tile_size)
                             ){
-                                // current = new Point(
-                                //     grid_col, grid_row, 
-                                //     tiles[grid_row][grid_col], 
-                                //     true
-                                // );
                                 handleBucket(grid_col, grid_row, tile, mouse);
                                 has_changes = true;
                             }
@@ -195,20 +188,15 @@ public class Grid {
                                 //add old tile to undo stack
                                 Point newp = new Point(
                                                     grid_col, grid_row, 
-                                                    tiles[grid_row][grid_col], 
+                                                    tiles[grid_row][grid_col], tile,
                                                     false
                                                 );
 
                                 //only add once, previously multiple copies were added due to clock speed (milliseconds)
                                 if(!checkIfDuplicate(newp) && !bucket){
                                     undo.push(newp);
-                                    System.out.println("Undo Pushed: " + newp.x + " " + newp.y + " " 
-                                    + newp.tile.name + " " + newp.tile.is_solid + " " + newp.tile.is_animated);
                                 }
-
-                                counter++;
                                 
-
                                 //check if redo is not empty, if it is not empty therefore the past is changed delete the future
                                 if(!redo.isEmpty()){
                                     redo.clear();
@@ -218,14 +206,11 @@ public class Grid {
                                 //if so, that means, the mouse is pointing at the tile, place it
                                 tiles[grid_row][grid_col] = tile;
                                 //replacing the tile in the tiles array that will draw on the grid
-
-                                //assign to current 
-                                current = newp;
                                 
                                 //detect changes
                                 if(!tile.name.equals("void")) has_changes = true;
                             }
-                        }else counter = 0;
+                        }
                         
                         G.drawImage(
                             tiles[grid_row][grid_col].image, 
@@ -248,7 +233,8 @@ public class Grid {
 
         Point p = undo.peek();
        
-        return (p.x == check.x && p.y == check.y && p.tile.name.equals(check.tile.name) && p.is_flooded == check.is_flooded);
+        return (p.x == check.x && p.y == check.y && p.old_tile.name.equals(check.old_tile.name) 
+        && p.new_tile.name.equals(check.new_tile.name) && p.is_flooded == check.is_flooded);
        
     }
 
@@ -259,19 +245,11 @@ public class Grid {
             //handle both flooded and unflooded tiles
             do{
                 Point p = undo.pop();
-                
-                //place present into redo
-                redo.push(current);
-                // System.out.println("Redo Pushed from Undo: " + p.x + " " + p.y + " " 
-                //                     + p.tile.name + " " + p.tile.is_solid + " " + p.tile.is_animated);
-                // System.out.println("Redo size: " + redo.size());
-                //undo on grid
-                if(p.y < 0 || p.y >= map_height || p.x < 0 || p.x >= map_length) continue;
-                else tiles[p.y][p.x] = p.tile;
-                //replace current
-                current = p;
+                tiles[p.y][p.x] = p.old_tile;
+                redo.push(p);
                 if(undo.isEmpty()) break;
             }while(undo.peek().is_flooded);
+
         }
 
         System.out.println("Undo complete! Undo size: " + undo.size());
@@ -285,19 +263,11 @@ public class Grid {
             //handle both flooded and unflooded tiles
             do{
                 Point p = redo.pop();
-
-                current = p;
-                //place present into undo
-                undo.push(current);
-                // System.out.println("Undo Pushed from Redo: " + p.x + " " + p.y + " " 
-                //                     + p.tile.name + " " + p.tile.is_solid + " " + p.tile.is_animated);
-                //redo on grid
-                if(p.y < 0 || p.y >= map_height || p.x < 0 || p.x >= map_length) continue;
-                else tiles[p.y][p.x] = p.tile;
-                //replace current
-                
+                tiles[p.y][p.x] = p.new_tile;
+                undo.push(p);
                 if(redo.isEmpty()) break;
             }while(redo.peek().is_flooded);
+
         }
 
         System.out.println("Redo complete! Redo size: " + redo.size());
@@ -313,7 +283,7 @@ public class Grid {
         if(old_tile.name.equals(tile.name)) return;
 
         Queue<Point> coordinates = new LinkedList<>();
-        coordinates.add(new Point(base_x, base_y, old_tile, true));
+        coordinates.add(new Point(base_x, base_y, old_tile, tile, true));
 
         while(!coordinates.isEmpty()){
             //get latest coords to check
@@ -331,28 +301,21 @@ public class Grid {
             //perform flooding
             else{
                 //add old tile to undo stack
-                // current.tile = tiles[check.y][check.x];
-
-                //avoid duplocates
-                if(!checkIfDuplicate(current)){
-                    undo.push(current);
-                    System.out.println("Undo Bucket Pushed: " + current.x + " " + current.y + " " 
-                    + current.tile.name + " " + current.tile.is_solid + " " + current.tile.is_animated);
-                }
+                undo.push(check);
 
                 tiles[check.y][check.x] = tile;
                 //queue the 4 other points (up, down, left, right)
                 if(!checkIfValidCoords(check.x - 1, check.y)){
-                    coordinates.add(new Point(check.x - 1, check.y, tiles[check.y][check.x - 1], true));
+                    coordinates.add(new Point(check.x - 1, check.y, tiles[check.y][check.x - 1], tile, true));
                 }
                 if(!checkIfValidCoords(check.x + 1, check.y)){
-                    coordinates.add(new Point(check.x + 1, check.y, tiles[check.y][check.x + 1], true));
+                    coordinates.add(new Point(check.x + 1, check.y, tiles[check.y][check.x + 1], tile, true));
                 }
                 if(!checkIfValidCoords(check.x, check.y - 1)){
-                    coordinates.add(new Point(check.x, check.y - 1, tiles[check.y - 1][check.x], true));
+                    coordinates.add(new Point(check.x, check.y - 1, tiles[check.y - 1][check.x], tile, true));
                 }
                 if(!checkIfValidCoords(check.x, check.y + 1)){
-                    coordinates.add(new Point(check.x, check.y + 1, tiles[check.y + 1][check.x], true));
+                    coordinates.add(new Point(check.x, check.y + 1, tiles[check.y + 1][check.x], tile, true));
                 }
 
                 flooded_tiles++;

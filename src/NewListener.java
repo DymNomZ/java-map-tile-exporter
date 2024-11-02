@@ -25,6 +25,10 @@ public class NewListener implements ActionListener {
                 int len = Integer.parseInt(l);
                 int hei = Integer.parseInt(h);
 
+                //clear previous stacks
+                data_handler.panel.grid.undo.clear();
+                data_handler.panel.grid.redo.clear();
+
                 data_handler.panel.grid.initializeGrid(len, hei);
                 data_handler.panel.cam.adjustPosition(
                     (len * data_handler.panel.tile_size) / 2, 
