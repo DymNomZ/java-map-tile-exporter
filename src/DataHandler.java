@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class DataHandler {
 
@@ -22,6 +23,16 @@ public class DataHandler {
 
     public boolean isDigitOnly(String str) {
         return Pattern.matches("[0-9]+", str);
+    }
+
+    public int checkMax(int value, int max, String message){
+        if(value > max){
+            JOptionPane.showMessageDialog(null, message);
+            return max;
+        }
+        else{
+            return value;
+        }
     }
 
     public ArrayList<Tile> getusedTiles(){

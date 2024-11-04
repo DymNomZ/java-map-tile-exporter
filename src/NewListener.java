@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 public class NewListener implements ActionListener {
 
@@ -15,7 +16,7 @@ public class NewListener implements ActionListener {
             String l = GUI.TextFields.MAP_LENGTH.getText();
             String h = GUI.TextFields.MAP_HEIGHT.getText();
             //check if both text fields have values in them
-            if(l.length() != 0 && h.length() != 0){
+            if(l.length() != 0 && h.length() != 0 && data_handler.isDigitOnly(l) && data_handler.isDigitOnly(h)){
 
                 data_handler.panel.grid.has_changes = false;
 
@@ -24,6 +25,10 @@ public class NewListener implements ActionListener {
 
                 int len = Integer.parseInt(l);
                 int hei = Integer.parseInt(h);
+
+                //MAX 500
+                len = data_handler.checkMax(len, 500, "Max allowed length is 500, input will be set to 500");
+                hei = data_handler.checkMax(hei, 500, "Max allowed height is 500, input will be set to 500");
 
                 //clear previous stacks
                 data_handler.panel.grid.undo.clear();
@@ -39,7 +44,7 @@ public class NewListener implements ActionListener {
                 GUI.TextFields.MAP_HEIGHT.setText(String.format("%d", hei));
             }
             else {
-                //POP-UP DAIALOG HERE
+                JOptionPane.showMessageDialog(null, "Both fields must have valid inputs");
             }
         }
     }

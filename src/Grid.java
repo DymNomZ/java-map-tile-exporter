@@ -49,7 +49,7 @@ public class Grid {
     //resize grid
     public void resize(int new_col, int new_row){
 
-        //Do not perform if new values for col and row are jsut the same to save overhead
+        //Do not perform if new values for col and row are just the same to save overhead
         if(new_col != map_length || new_row != map_height){
 
             int base_col = map_length;

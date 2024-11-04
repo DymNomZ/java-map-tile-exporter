@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 public class Resizer implements ActionListener {
 
@@ -22,6 +23,10 @@ public class Resizer implements ActionListener {
                 int len = Integer.parseInt(l);
                 int hei = Integer.parseInt(h);
 
+                //MAX 500
+                len = data_handler.checkMax(len, 500, "Max allowed length is 500, input will be set to 500");
+                hei = data_handler.checkMax(hei, 500, "Max allowed height is 500, input will be set to 500");
+
                 data_handler.panel.grid.resize(len, hei);
                 data_handler.panel.cam.adjustPosition(
                     (len * data_handler.panel.tile_size) / 2, 
@@ -32,8 +37,7 @@ public class Resizer implements ActionListener {
                 GUI.TextFields.MAP_HEIGHT.setText(String.format("%d", hei));
             }
             else {
-                //POP-UP DAIALOG HERE
-                System.out.println("Non-number inputs!");
+                JOptionPane.showMessageDialog(null, "Both fields must have valid inputs");
             }
         }
     }

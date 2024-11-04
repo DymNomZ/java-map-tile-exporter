@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 
 public class ClickListener implements ActionListener {
     
@@ -53,14 +54,17 @@ public class ClickListener implements ActionListener {
     }
 
     public void displayPopUp(){
-        //TO-DO DISPLAY POP UP FOR INVALIDATION!
+        JOptionPane.showMessageDialog(null, "Dude, index must be a number");
     }
 
     public void updateSelectedTile(String raw_index){
 
         int new_tile_idx = Integer.parseInt(raw_index);
-        //MAX 100
-        if(new_tile_idx > 100) new_tile_idx = 100;
+        //MAX 200
+        if(new_tile_idx > 200){
+            new_tile_idx = 200;
+            JOptionPane.showMessageDialog(null, "200 is the maximum allowed index, input will be set to 200");
+        }
         //get states for booleans
         boolean new_solid_state = GUI.Checkboxes.SOLID.isSelected();
         boolean new_animated_state = GUI.Checkboxes.ANIMATED.isSelected();
