@@ -61,9 +61,9 @@ public class ClickListener implements ActionListener {
 
         int new_tile_idx = Integer.parseInt(raw_index);
         //MAX 200
-        if(new_tile_idx > 200){
-            new_tile_idx = 200;
-            JOptionPane.showMessageDialog(null, "200 is the maximum allowed index, input will be set to 200");
+        if(new_tile_idx > 500){
+            new_tile_idx = 500;
+            JOptionPane.showMessageDialog(null, "500 is the maximum allowed index, input will be set to 500");
         }
         //get states for booleans
         boolean new_solid_state = GUI.Checkboxes.SOLID.isSelected();
