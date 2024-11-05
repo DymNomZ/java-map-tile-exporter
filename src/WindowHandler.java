@@ -1,4 +1,5 @@
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
@@ -24,9 +25,9 @@ public class WindowHandler implements WindowListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         
+        int code = e.getKeyCode();
+        
         if(e.isControlDown()){
-
-            int code = e.getKeyCode();
 
             switch(code) {
 
@@ -48,6 +49,20 @@ public class WindowHandler implements WindowListener, KeyListener {
                         panel.data_handler.is_redoing = true;
                     }
                 }
+            }
+        }
+
+        if(code == KeyEvent.VK_SPACE){
+            //BUCKET HOTKEY
+            if(!panel.grid.bucket){
+                GUI.Labels.BUCKET.setForeground(Color.GREEN);
+                GUI.Labels.BUCKET.setText("On");
+                panel.grid.bucket = true;
+            }
+            else{
+                GUI.Labels.BUCKET.setForeground(Color.RED);
+                GUI.Labels.BUCKET.setText("Off");
+                panel.grid.bucket = false;
             }
         }
     }

@@ -139,6 +139,10 @@ public class DataHandler {
             }while ((reader.readLine()) != null);
             reader.close();
 
+            //update length and height text fields
+            GUI.TextFields.MAP_LENGTH.setText(String.format("%d", map_l));
+            GUI.TextFields.MAP_HEIGHT.setText(String.format("%d", map_h));
+
             map_data_stream = zip.getInputStream(map);
             reader = new BufferedReader(new InputStreamReader(map_data_stream));
 
