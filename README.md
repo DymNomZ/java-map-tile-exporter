@@ -1,4 +1,16 @@
 # 🍀 Map Tile Exporter 📝:
+
+## A basic tile exporter for developing maps for 2D games.
+
+**Information:**<br>
+
+It exports to a .zip file, which contains the following files:
+- A list of images used when creating the map/level.
+- **[map name]$.txt**
+- This stores the indices of each tile used. Most implementations utilize this file when loading tiles of their maps.
+- **tile_data.txt**
+- Columns represent index, solid, and animated, respectively, with 1 being true and 0 as false for solid and animated values.
+
 ❗**Instructions:**
 
 **Set an index for each tile**<br>
