@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="j2dc-map-editor">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/j2dc-map-editor.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
