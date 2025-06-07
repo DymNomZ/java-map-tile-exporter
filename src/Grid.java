@@ -217,6 +217,9 @@ public class Grid {
                             screen_x, screen_y, 
                             tile_size, tile_size, null
                         );
+
+                        G.drawImage(DEFAULT_TILE.image, screen_x, screen_y,
+                                tile_size, tile_size, null);
                     }
 
                 grid_col++;

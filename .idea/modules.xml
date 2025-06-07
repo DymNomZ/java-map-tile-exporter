@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/j2dc-map-editor.iml" filepath="$PROJECT_DIR$/j2dc-map-editor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/java-map-tile-exporter.iml" filepath="$PROJECT_DIR$/java-map-tile-exporter.iml" />
     </modules>
   </component>
 </project>
