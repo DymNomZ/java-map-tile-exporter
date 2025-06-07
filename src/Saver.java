@@ -11,8 +11,12 @@ public class Saver implements ActionListener {
 
     DataHandler data_handler;
 
+    public static ArrayList<String> tile_names;
+    public static int CURRENT_INDEX;
+
     public Saver(DataHandler data_handler) {
         this.data_handler = data_handler;
+        tile_names = new ArrayList<>();
     }
 
     @Override

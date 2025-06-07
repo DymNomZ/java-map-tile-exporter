@@ -14,6 +14,7 @@ public class Loader implements ActionListener {
     int[][] tile_data_indexes = null;
     ArrayList<Tile> loaded_tiles = new ArrayList<>();
     ArrayList<ZipEntry> png_entries = new ArrayList<>();
+    String tile_name = "";
     
     DataHandler data_handler;
 
@@ -70,6 +71,16 @@ public class Loader implements ActionListener {
 
                         if(entry.getName().endsWith(".png")){
                             png_entries.add(entry);
+
+                            //add to tile_names in Saver
+                            tile_name = entry.getName();
+                            //extract tile name
+                            tile_name = tile_name.substring(
+                                    tile_name.lastIndexOf('$') + 1,
+                                    tile_name.lastIndexOf('.')
+                            );
+
+                            Saver.tile_names.add(tile_name);
                         }
                     }
 

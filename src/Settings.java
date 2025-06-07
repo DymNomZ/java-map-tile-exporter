@@ -142,6 +142,14 @@ public class Settings extends JPanel {
     }
 
     public void editTileProperties(TileHandler th){
+
+        //add tile name as basis for index
+        if(!Saver.tile_names.contains(th.tile.name)){
+            Saver.tile_names.add(th.tile.name);
+            //udpate index
+            th.tile.index = Saver.tile_names.size();
+        }
+
         //Overwrite current displayed tile properties
         GUI.Labels.TILE_NAME.setText("<html>" + th.tile.name + "<html>");
         GUI.Labels.TILE_IMAGE.setIcon(

@@ -77,7 +77,7 @@ public class GUI {
             TILE_PROPERTIES = new JLabel("Tile Properties");
             TILE_IMAGE = new JLabel(new ImageIcon(img));
             TILE_NAME = new JLabel("Void");
-            INDEX = new JLabel("Set Index");
+            INDEX = new JLabel("Tile Index");
             SOLID = new JLabel("Solid");
             ANIMATED = new JLabel("Animated");
 
@@ -127,6 +127,7 @@ public class GUI {
             TILE_INDEX.setFont(new Font("Arial", Font.PLAIN, 15));
             TILE_INDEX.setBackground(Color.BLACK);
             TILE_INDEX.setForeground(Color.WHITE);
+            TILE_INDEX.setEditable(false);
         }
     }
 

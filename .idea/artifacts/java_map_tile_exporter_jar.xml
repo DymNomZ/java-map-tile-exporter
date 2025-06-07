@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="java-map-tile-exporter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/java_map_tile_exporter_jar</output-path>
+    <root id="archive" name="java-map-tile-exporter.jar">
+      <element id="module-output" name="java-map-tile-exporter" />
+    </root>
+  </artifact>
+</component>
