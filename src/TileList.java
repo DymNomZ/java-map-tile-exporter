@@ -60,7 +60,11 @@ public class TileList extends JPanel {
         for(Tile t : tiles){
 
             if(!this.tiles.contains(t)){
-                JLabel tile_holder = new JLabel(new ImageIcon(t.image));
+                JLabel tile_holder = new JLabel(
+                        new ImageIcon(
+                                t.image.getScaledInstance(32, 32, Image.SCALE_SMOOTH)
+                        )
+                );
                 tile_holder.addMouseListener(new TileHandler(data_handler, t));
                 
                 GUI.Panels.TILE_LIST.add(tile_holder);
